@@ -317,7 +317,7 @@ export const diveSites: DiveSite[] = [
       },
 {
         type: "image",
-        url: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/puntos/464678161_27169256919389293_4018327767793814721_n_wkvnf1.jpg",
+        url: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/puntos/puntaLoma/464678161_27169256919389293_4018327767793814721_n_wkvnf1.jpg",
       },
       {
         type: "image",

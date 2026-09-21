@@ -1,10 +1,8 @@
 "use client"
 
-import Link from "next/link"
 import ButtonRojo from "@/components/ui/button-rojo"
-import { Card, CardContent } from "@/components/ui/card"
-import { ArrowRight } from "lucide-react"
-import { FormattedMessage } from "react-intl"
+import { FormattedMessage, useIntl } from "react-intl"
+import { ScrubText } from "@/components/detail/DetailMotion"
 
 interface DescripcionSectionProps {
   slug: string
@@ -12,53 +10,33 @@ interface DescripcionSectionProps {
 }
 
 export default function DescripcionSection({ slug, description }: DescripcionSectionProps) {
+  const intl = useIntl()
+  const [lead, ...rest] = description.map((key) => intl.formatMessage({ id: key }))
+  const isBaptism = slug === "bautismo-buceo"
+  const supportingCopy = isBaptism ? rest.slice(0, -1) : rest
+  const nextStepCopy = isBaptism ? rest.at(-1) : null
+
   return (
-    <section id="descripcion" className="pt-12 scroll-mt-16">
-      <Card className="relative bg-negro-secundario shadow-md mb-8 border-[#403d39] hover:shadow-xl transition-shadow duration-300">
-        <CardContent className="p-4">
-          <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
-            <ArrowRight className="h-8 w-8 text-rojo" />
-            <FormattedMessage id="descripcionSection.title" />
-          </h2>
-          <div className="space-y-4">
-            {description.map((descKey, index) => {
-              if (slug === "bautismo-buceo") {
-                return (
-                  <p key={index} className="text-white leading-relaxed mb-2">
-                    <FormattedMessage
-                      id={descKey}
-                      values={{
-                        discoverScubaDiving: (
-                          <span className="font-bold text-rojo hover:underline">
-                            <Link href="/cursos/padi/discover-scuba-diving">
-                              <FormattedMessage id="descripcionSection.discoverScubaDiving" />
-                            </Link>
-                          </span>
-                        ),
-                      }}
-                    />
-                  </p>
-                )
-              }
-              return (
-                <p key={index} className="text-white leading-relaxed mb-2">
-                  <FormattedMessage id={descKey} />
-                </p>
-              )
-            })}
-            {slug === "bautismo-buceo" && (
-              <div className="my-4 text-center">
-                <Link href="/cursos/padi/discover-scuba-diving">
-                  <ButtonRojo
-                    texto={<FormattedMessage id="descripcionSection.button.discoverScubaDiving" />}
-                    href="/cursos/padi/discover-scuba-diving"
-                  />
-                </Link>
-              </div>
-            )}
+    <section id="descripcion" className="scroll-mt-24 py-28 md:py-36">
+      <div className="mx-auto max-w-6xl">
+        <h2 className="mx-auto max-w-4xl text-center text-4xl font-bold uppercase leading-[.95] tracking-[-.04em] text-white md:text-6xl">
+          <FormattedMessage id="descripcionSection.title" />
+        </h2>
+        <ScrubText text={lead} className="mx-auto mt-10 max-w-5xl text-center text-[clamp(1.35rem,2.45vw,2.5rem)] font-medium leading-[1.3] tracking-[-.025em] text-white" />
+
+        {supportingCopy.length > 0 ? (
+          <div className="mx-auto mt-12 grid max-w-5xl gap-8 border-t border-white/12 pt-10 text-base leading-8 text-white/66 md:grid-cols-2 md:gap-14">
+            {supportingCopy.map((text, index) => <p key={`${text}-${index}`}>{text}</p>)}
           </div>
-        </CardContent>
-      </Card>
+        ) : null}
+
+        {isBaptism && nextStepCopy ? (
+          <div className="mx-auto mt-12 grid max-w-5xl gap-7 border-l-2 border-rojo bg-[#111416] p-7 md:grid-cols-[1fr_auto] md:items-center md:p-9">
+            <p className="max-w-2xl text-base leading-8 text-white/68">{nextStepCopy}</p>
+            <ButtonRojo texto={<FormattedMessage id="descripcionSection.button.discoverScubaDiving" />} href="/cursos/padi/discover-scuba-diving" />
+          </div>
+        ) : null}
+      </div>
     </section>
   )
 }

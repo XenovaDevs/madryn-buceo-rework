@@ -1,121 +1,30 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import React, { useRef } from "react";
-import { ChevronLeft, ChevronRight, Users } from "lucide-react";
-import { motion } from "framer-motion";
-import { Staff } from "@/lib/data/Staff";
-import { FormattedMessage } from "react-intl";
 import Image from "next/image";
+import { FormattedMessage } from "react-intl";
+import type { Staff } from "@/lib/data/Staff";
 
-interface Props {
-  staff: Staff[];
-}
-
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
-
-export default function StaffCarousel({ staff }: Props) {
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  const scrollLeft = () => {
-    if (carouselRef.current) {
-      const cardWidth =
-        carouselRef.current.querySelector(".card")?.clientWidth || 250;
-      carouselRef.current.scrollBy({ left: -cardWidth, behavior: "smooth" });
-    }
-  };
-
-  const scrollRight = () => {
-    if (carouselRef.current) {
-      const cardWidth =
-        carouselRef.current.querySelector(".card")?.clientWidth || 250;
-      carouselRef.current.scrollBy({ left: cardWidth, behavior: "smooth" });
-    }
-  };
-
+export default function StaffCarousel({ staff }: { staff: Staff[] }) {
   return (
-    <motion.section
-      className="mt-8 mb-8"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={fadeIn}
-    >
-      <div className="container mx-auto px-8">
-        <Card
-          className="bg-negro-secundario shadow-md border-[#403d39] p-4 sm:p-8"
-        >
-          <div className="flex flex-col justify-center h-full min-h-[300px] sm:min-h-[400px]">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white flex justify-center items-center gap-2">
-              <Users className="h-6 w-6 text-rojo" />
-              <FormattedMessage id="our.team" defaultMessage="About Us" />
-            </h2>
-            <CardContent className="p-4 sm:p-8 relative">
-              <button
-                onClick={scrollLeft}
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-negro text-white p-3 rounded-full z-10 hover:bg-[#403d39] sm:p-2"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft size={24} />
-              </button>
+    <section className="section-space border-t border-white/10 bg-[#111416]">
+      <div className="site-container">
+        <p className="eyebrow">Quienes te acompañan</p>
+        <h2 className="section-title mt-5 text-white"><FormattedMessage id="our.team" defaultMessage="Nuestro equipo" /></h2>
 
-              <div
-                ref={carouselRef}
-                className="w-full overflow-x-auto overflow-y-hidden scrollbar-hide snap-x snap-mandatory"
-                style={{ scrollBehavior: "smooth" }}
-              >
-                <div className="flex gap-4 w-max px-2">
-                  {staff.map((member) => (
-                    <Card
-                      key={member.name}
-                      className="card min-w-[250px] sm:min-w-[280px] bg-negro text-white border-[#403d39] shadow-lg flex flex-col hover:scale-95 transition-transform snap-center p-0"
-                      style={{ borderRadius: 0 }}
-                    >
-                      <div
-                        className="relative h-64"
-                        style={{ borderRadius: 0 }}
-                      >
-                        <Image
-                          src={member.media.url}
-                          alt={member.name}
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300"
-                          style={{ borderRadius: 0 }}
-                          width={800}
-                          height={600}
-                        />
-
-                      </div>
-                      <CardContent className="p-2 text-center w-full">
-                        <div className="h-2 flex items-center justify-center">
-                          <h3 className="text-sm sm:text-sm font-bold text-[#e12222]">
-                            {member.name}
-                          </h3>
-                        </div>
-                        <div className="w-[245px] mt-2">
-                          <p className="text-white/80 text-xs leading-tight max-h-[8.7em]  overflow-hidden flex-grow mb-2">
-                            <FormattedMessage id={member.description} defaultMessage="About Us" />
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+        <div className="mt-12 grid items-stretch gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          {staff.map((member, index) => (
+            <article key={member.name} className="group h-full border border-white/10 bg-[#111416]">
+              <div className="relative aspect-[4/4.5] overflow-hidden">
+                <Image src={member.media.url} alt={member.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover grayscale-[20%] transition duration-500 group-hover:scale-[1.025] group-hover:grayscale-0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+                <span className="absolute left-5 top-5 text-[.6rem] font-bold uppercase tracking-[.18em] text-white/60">Equipo · 0{index + 1}</span>
+                <h3 className="absolute bottom-5 left-5 right-5 font-display text-3xl font-bold uppercase text-white">{member.name}</h3>
               </div>
-
-              <button
-                onClick={scrollRight}
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-negro text-white p-3 rounded-full z-10 hover:bg-[#403d39] sm:p-2"
-                aria-label="Scroll right"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </CardContent>
-          </div>
-        </Card>
+              <p className="min-h-32 p-6 text-sm leading-7 text-white/55"><FormattedMessage id={member.description} /></p>
+            </article>
+          ))}
+        </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

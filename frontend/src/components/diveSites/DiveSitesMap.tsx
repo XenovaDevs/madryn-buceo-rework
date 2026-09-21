@@ -13,7 +13,6 @@ interface Props {
   selectedCoords: [number, number];
   sites: DiveSite[];
   certificationFilter: string | null;
-  setCertificationFilter: (filter: string | null) => void;
   onMarkerClick: (site: DiveSite) => void;
 }
 
@@ -44,13 +43,13 @@ const DiveSitesMap: React.FC<Props> = ({
 
   return (
     <motion.section
-      className="mb-8"
+      className="mb-1"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={fadeIn}
     >
-      <div className="relative isolate h-[360px] md:h-[520px] rounded-xl overflow-hidden shadow-md border border-[#403d39] z-0">
+      <div className="relative isolate z-0 h-[380px] overflow-hidden border border-white/14 md:h-[580px]">
         <MapContainer
           center={selectedCoords}
           zoom={12}
@@ -81,7 +80,7 @@ const DiveSitesMap: React.FC<Props> = ({
                 className="leaflet-tooltip-custom"
               >
                 <div
-                  className="px-2 py-1 bg-[#252422] text-white text-xs font-semibold rounded-md shadow-md"
+                  className="bg-[#252422] px-2 py-1 text-xs font-semibold text-white"
                   style={{ backgroundColor: "#252422", boxShadow: "none" }}
                 >
                   <FormattedMessage id ={site.name}/>

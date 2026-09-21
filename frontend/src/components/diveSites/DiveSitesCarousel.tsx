@@ -1,12 +1,11 @@
 "use client";
 
-import { DiveSite } from "@/lib/data/ArrayDiveSites";
-import { Card, CardContent } from "@/components/ui/card";
-import React, { useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
-import { FormattedMessage } from "react-intl";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { ChevronLeft, ChevronRight, MapPin, MoveRight } from "lucide-react";
+import { FormattedMessage } from "react-intl";
+import type { DiveSite } from "@/lib/data/ArrayDiveSites";
+import { SharedDetailTransition } from "@/components/detail/SharedDetailTransition";
 
 interface Props {
   sites: DiveSite[];
@@ -15,12 +14,11 @@ interface Props {
   setSelectedCoords: (coords: [number, number]) => void;
   certificationFilter: string | null;
   openModal: (site: DiveSite) => void;
+  modalSiteName?: string;
 }
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
+const getCardImage = (site: DiveSite) =>
+  site.media.find((item) => item.type === "image")?.url ?? "/images/placeholder.jpg";
 
 export default function DiveSitesCarousel({
   sites,
@@ -29,118 +27,103 @@ export default function DiveSitesCarousel({
   setSelectedCoords,
   certificationFilter,
   openModal,
+  modalSiteName,
 }: Props) {
+  const rail = useRef<HTMLDivElement>(null);
   const filteredSites = certificationFilter
     ? sites.filter((site) => site.certification === certificationFilter)
     : sites;
-
-  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (filteredSites.length > 0 && activeIndex >= filteredSites.length) {
       setActiveIndex(0);
       setSelectedCoords(filteredSites[0].coords);
     }
-  }, [filteredSites, activeIndex, setActiveIndex, setSelectedCoords]);
+  }, [activeIndex, filteredSites, setActiveIndex, setSelectedCoords]);
 
-  const scrollLeft = () => {
-    if (carouselRef.current) {
-      const cardWidth =
-        carouselRef.current.querySelector(".card")?.clientWidth || 280;
-      carouselRef.current.scrollBy({ left: -cardWidth, behavior: "smooth" });
-    }
+  const select = (site: DiveSite, index: number) => {
+    setActiveIndex(index);
+    setSelectedCoords(site.coords);
   };
 
-  const scrollRight = () => {
-    if (carouselRef.current) {
-      const cardWidth =
-        carouselRef.current.querySelector(".card")?.clientWidth || 280;
-      carouselRef.current.scrollBy({ left: cardWidth, behavior: "smooth" });
-    }
+  const scroll = (direction: -1 | 1) => {
+    rail.current?.scrollBy({ left: direction * Math.min(window.innerWidth * 0.72, 540), behavior: "smooth" });
   };
 
-  if (filteredSites.length === 0) {
-    return (
-      <div className="text-white text-center">
-        No hay sitios disponibles para este filtro.
-      </div>
-    );
+  if (!filteredSites.length) {
+    return <p className="border border-white/12 p-8 text-center text-white/65">No hay sitios disponibles para este filtro.</p>;
   }
 
-  const getCardImage = (media: { type: "image" | "video"; url: string }[]) => {
-    const firstImage = media.find((item) => item.type === "image");
-    return firstImage ? firstImage.url : "/images/placeholder.jpg";
-  };
-
   return (
-    <motion.section
-      className="mb-8"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={fadeIn}
-    >
-      <div className="relative isolate overflow-hidden shadow-md">
-        <div className="flex flex-col justify-center h-full min-h-[300px] sm:min-h-[400px]">
-          <div className="relative">
-            <button
-              onClick={scrollLeft}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-[#252422] text-white p-3 rounded-full z-10 hover:bg-[#403d39] sm:p-2 cursor-pointer"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft size={24} />
-            </button>
-
-            <div
-              ref={carouselRef}
-              className="overflow-x-hidden overflow-y-hidden scrollbar-hide snap-x snap-mandatory"
-              style={{ scrollBehavior: "smooth" }}
-            >
-              <div className="flex gap-4 w-max px-2">
-                {filteredSites.map((site, index) => (
-                  <Card
-                    key={site.difficulty}
-                    onClick={() => {
-                      setSelectedCoords(site.coords);
-                      setActiveIndex(index);
-                      openModal(site);
-                    }}
-                    className={`card min-w-[280px] bg-negro-secundario text-white border-[#403d39] shadow-lg flex flex-col justify-between hover:scale-95 transition-transform snap-center p-0 cursor-pointer ${
-                      activeIndex === index ? "" : ""
-                    }`}
-                    style={{ borderRadius: 0 }}
-                  >
-                    <div className="relative h-64" style={{ borderRadius: 0 }}>
-                      <Image
-                        src={getCardImage(site.media)}
-                        alt={site.name}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300"
-                        style={{ borderRadius: 0 }}
-                        width={280}
-                        height={280}
-                      />
-                    </div>
-
-                    <CardContent className="p-2 text-center w-full mb-4">
-                      <h3 className="text-sm font-bold text-white/80">
-                        <FormattedMessage id={site.name} />
-                      </h3>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            <button
-              onClick={scrollRight}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-[#252422] text-white p-3 rounded-full z-10 hover:bg-[#403d39] sm:p-2 cursor-pointer"
-              aria-label="Scroll right"
-            >
-              <ChevronRight size={24} />
-            </button>
-          </div>
+    <section className="mt-12" aria-labelledby="dive-sites-rail-title">
+      <div className="mb-6 flex items-end justify-between gap-6">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[.15em] text-rojo">{filteredSites.length} puntos</p>
+          <h2 id="dive-sites-rail-title" className="mt-2 text-2xl font-bold uppercase tracking-[-.025em] text-white md:text-3xl">
+            <FormattedMessage id="diveSites.explore" defaultMessage="Explorá el mapa submarino" />
+          </h2>
+        </div>
+        <div className="hidden gap-2 sm:flex">
+          <button type="button" onClick={() => scroll(-1)} aria-label="Ver sitios anteriores" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
+            <ChevronLeft className="size-5" aria-hidden />
+          </button>
+          <button type="button" onClick={() => scroll(1)} aria-label="Ver sitios siguientes" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
+            <ChevronRight className="size-5" aria-hidden />
+          </button>
         </div>
       </div>
-    </motion.section>
+
+      <div
+        ref={rail}
+        className="flex snap-x snap-mandatory gap-1 overflow-x-auto pb-3 [scrollbar-color:#e51b23_#171b1d] lg:min-h-[34rem]"
+      >
+        {filteredSites.map((site, index) => {
+          const active = index === activeIndex;
+          return (
+            <button
+              key={site.name}
+              type="button"
+              data-active={active}
+              aria-pressed={active}
+              onMouseEnter={() => select(site, index)}
+              onFocus={() => select(site, index)}
+              onClick={() => {
+                select(site, index);
+                openModal(site);
+              }}
+              className="group relative min-h-[30rem] basis-[82vw] shrink-0 snap-center cursor-pointer overflow-hidden text-left transition-[flex-basis] duration-500 ease-out sm:basis-[60vw] lg:min-h-[34rem] lg:basis-28 lg:data-[active=true]:basis-[34rem]"
+            >
+              <SharedDetailTransition id={`dive-site-${site.name}`} role="image" enabled={modalSiteName !== site.name}>
+                <div className="absolute inset-0">
+                  <Image
+                    src={getCardImage(site)}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 82vw, (max-width: 1024px) 60vw, 544px"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                </div>
+              </SharedDetailTransition>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/18 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.13em] text-white/68">
+                  <MapPin className="size-4 text-rojo" aria-hidden />
+                  {site.time} / {site.certification}
+                </div>
+                <SharedDetailTransition id={`dive-site-${site.name}`} role="title" enabled={modalSiteName !== site.name}>
+                  <h3 className="mt-4 min-w-[15rem] max-w-md text-3xl font-bold uppercase leading-[.95] tracking-[-.035em] text-white md:text-4xl">
+                    <FormattedMessage id={site.name} />
+                  </h3>
+                </SharedDetailTransition>
+                <span className="mt-6 inline-flex min-h-11 items-center gap-3 text-xs font-bold uppercase tracking-[.11em] text-white">
+                  <FormattedMessage id="diveSites.viewDetail" defaultMessage="Ver detalle" />
+                  <MoveRight className="size-5 text-rojo transition-transform group-hover:translate-x-1" aria-hidden />
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 }

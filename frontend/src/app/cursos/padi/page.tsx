@@ -9,7 +9,7 @@ export default function CursosPage() {
   return (
     <>
       <CursoHeroSection />
-      <div className="container flex flex-col items-center justify-center px-8 mx-auto pb-20">
+      <div className="site-container flex flex-col items-center justify-center">
         <CursosIntroSection />
         <CursoFiltro />
       </div>

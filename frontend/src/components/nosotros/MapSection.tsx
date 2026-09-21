@@ -59,24 +59,25 @@ export default function MapSection() {
 
   return (
     <motion.section
-      className="mt-6 mb-10"
+      className="pb-20 md:pb-28"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={fadeIn}
     >
-      <div className="container mx-auto px-8">
+      <div className="site-container">
         <motion.div
-          className="mt-8 mb-10"
+          className=""
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           <motion.div variants={cardVariants} whileHover="hover">
-            <Card className="overflow-hidden h-full flex flex-col shadow-lg bg-[#252422] border-[#403d39] hover:shadow-xl transition-shadow p-0 rounded-lg">
-              <div className="relative h-64 rounded-t-lg">
+            <Card className="grid overflow-hidden border-white/10 bg-[#111416] p-0 shadow-none md:grid-cols-[1.4fr_.6fr]">
+              <div className="relative h-[28rem]">
                 <iframe
-                  className="h-full w-full rounded-t-lg"
+                  title="Ubicación de Madryn Buceo"
+                  className="h-full w-full grayscale-[25%]"
                   src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2928.441243190807!2d-65.017134!3d-42.779021!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xbe024aaf5130b587%3A0x67d8409a6b02a656!2sMadryn%20Buceo!5e0!3m2!1ses!2sar!4v1747014001371!5m2!1ses!2sar"
                   width="100%"
                   height="100%"
@@ -86,18 +87,18 @@ export default function MapSection() {
                   referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
-              <CardContent className="text-white flex flex-col flex-grow p-4">
+              <CardContent className="flex flex-col justify-center p-8 text-white md:p-10">
                 <motion.div
-                  className="mb-4 flex justify-center"
+                  className="mb-4"
                   variants={contentVariants}
                 >
-                  <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="font-display text-4xl font-bold uppercase text-white flex items-center gap-3">
                     <MapPin className="h-6 w-6 text-rojo" />
                     <FormattedMessage id="here" defaultMessage="here" />
                   </h2>
                 </motion.div>
                 <motion.p
-                  className="text-white/80 text-sm text-center whitespace-pre-line"
+                  className="text-white/55 text-sm leading-7 whitespace-pre-line"
                   variants={contentVariants}
                 >
                   <FormattedMessage id="see.you" defaultMessage="About Us" />

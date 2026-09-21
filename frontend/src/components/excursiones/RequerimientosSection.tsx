@@ -2,7 +2,6 @@
 
 import { Calendar, Activity, Heart, ArrowRight, Info } from "lucide-react";
 import type { Excursion } from "@/lib/data/Excursiones";
-import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { FormattedMessage } from "react-intl";
 
@@ -25,26 +24,21 @@ export default function RequirementsSection({
     }
 
     return (
-      <Card className="bg-negro-secundario shadow-md border-gray-800 h-full p-0 rounded-2xl">
-        <CardContent className="p-0 overflow-hidden h-full rounded-2xl">
-          <div
-            className="relative w-full h-full rounded-2xl"
-            style={{ minHeight: "100%" }}
-          >
+      <section id="requisitos" className="detail-chapter scroll-mt-28 grid overflow-hidden lg:grid-cols-2">
+          <div className="relative min-h-[24rem]">
             <Image
               src={imageSrc}
-              alt="formattedMessage({ id: `${excursion.title}.noRequirementsAlt` })"
-              className="absolute inset-0 w-full h-full object-cover"
-              width={1920}
-              height={1080}
+              alt="Paisaje submarino de la experiencia"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover transition-transform duration-700 hover:scale-[1.035]"
             />
-
-            <span className="sr-only">
-              <FormattedMessage id={`${excursion.title}.noRequirementsAlt`} />
-            </span>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex flex-col justify-end p-8 md:p-12">
+            <h2 className="text-4xl font-bold uppercase leading-none text-white md:text-6xl">Lista para vos</h2>
+            <p className="mt-6 max-w-md text-base leading-8 text-white/62">Esta experiencia se adapta al grupo y no exige requisitos adicionales antes de reservar.</p>
+          </div>
+      </section>
     );
   }
 
@@ -61,63 +55,20 @@ export default function RequirementsSection({
   };
 
   return (
-    <Card className="bg-negro-secundario shadow-md border-[#403d39] hover:shadow-xl transition-shadow duration-300 h-full">
-      <CardContent className="p-8">
-        <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
+    <section id="requisitos" className="detail-chapter scroll-mt-28 p-7 md:p-10 lg:p-12">
+        <h2 className="flex items-center gap-3 text-3xl font-bold uppercase tracking-[-.03em] text-white md:text-5xl">
           <ArrowRight className="h-8 w-8 text-rojo" />
           <FormattedMessage id="requerimientosSection.title" />
         </h2>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {excursion.requirements.slice(0, -1).map((req, index) => (
-              <div
-                key={index}
-                className="bg-negro/40 p-6 rounded-lg hover:bg-negro/60 transition-colors duration-200 flex flex-col items-center text-center"
-              >
-                <div className="mb-4 bg-negro/60 p-4 rounded-full">
-                  {getIcon(req.title)}
-                </div>
-                <h3 className="font-bold text-white text-lg mb-2">
-                  <FormattedMessage id={req.title} />
-                </h3>
-                <p className="text-white text-sm">
-                  <FormattedMessage id={req.description} />
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {excursion.requirements.length > 0 && (
-            <div
-              key="last-requirement"
-              className="bg-negro/40 p-6 rounded-lg hover:bg-negro/60 transition-colors duration-200 flex flex-col items-center text-center w-full"
-            >
-              <div className="mb-4 bg-negro/60 p-4 rounded-full">
-                {getIcon(
-                  excursion.requirements[excursion.requirements.length - 1]
-                    .title
-                )}
-              </div>
-              <h3 className="font-bold text-white text-lg mb-2">
-                <FormattedMessage
-                  id={
-                    excursion.requirements[excursion.requirements.length - 1]
-                      .title
-                  }
-                />
-              </h3>
-              <p className="text-white text-sm">
-                <FormattedMessage
-                  id={
-                    excursion.requirements[excursion.requirements.length - 1]
-                      .description
-                  }
-                />
-              </p>
-            </div>
-          )}
+        <div className="mt-10 grid gap-8 md:grid-cols-2">
+          {excursion.requirements.map((req, index) => (
+            <article key={`${req.title}-${index}`} className="border-l border-white/15 pl-5">
+              <div className="text-rojo">{getIcon(req.title)}</div>
+              <h3 className="mt-5 text-xl font-bold text-white"><FormattedMessage id={req.title} /></h3>
+              <p className="mt-3 text-sm leading-7 text-white/60"><FormattedMessage id={req.description} /></p>
+            </article>
+          ))}
         </div>
-      </CardContent>
-    </Card>
+    </section>
   );
 }

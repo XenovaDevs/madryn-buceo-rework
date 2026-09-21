@@ -1,116 +1,73 @@
 "use client";
 
 import { useState } from "react";
-import { cursos, allCursos, type Curso } from "@/lib/data/Cursos";
-import { Card, CardContent } from "../ui/card";
-import ButtonRojo from "../ui/button-rojo";
-import { useIntl, FormattedMessage } from "react-intl";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { cursos, allCursos } from "@/lib/data/Cursos";
+import { useIntl, FormattedMessage } from "react-intl";
+import { SharedDetailTransition } from "@/components/detail/SharedDetailTransition";
+
+const filters = [
+  ["todos", "cursos.filters.todos"],
+  ["cursos.filters.iniciacion", "cursos.filters.iniciacion"],
+  ["cursos.filters.avanzados", "cursos.filters.avanzados"],
+  ["cursos.filters.profesional", "cursos.filters.profesional"],
+] as const;
 
 export default function CursoFiltro() {
   const intl = useIntl();
   const [activeFilter, setActiveFilter] = useState<string>("todos");
-  const [filteredCursos, setFilteredCursos] = useState<Curso[]>(allCursos);
-
-  const handleFilterChange = (filter: string) => {
-    setActiveFilter(filter);
-
-    if (filter === "todos") {
-      setFilteredCursos(allCursos);
-    } else {
-      setFilteredCursos(cursos[filter as keyof typeof cursos] || []);
-    }
-  };
+  const filteredCursos = activeFilter === "todos" ? allCursos : cursos[activeFilter as keyof typeof cursos] || [];
 
   return (
-    <section className="py-16">
-      <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center text-white">
-        <FormattedMessage id="cursos.section.title" />
-      </h2>
-      <p className="text-center text-gray-300 mb-12 text-base">
-        <FormattedMessage id="cursos.section.subtitle" />
-      </p>
-      <div className="container">
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          <button
-            onClick={() => handleFilterChange("todos")}
-            className={`px-6 py-2 rounded-md transition-colors cursor-pointer ${
-              activeFilter === "todos"
-                ? "bg-rojo text-white"
-                : "bg-negro-secundario text-gray-300 hover:bg-gray-800"
-            }`}
-          >
-            <FormattedMessage id="cursos.filters.todos" />
-          </button>
-          <button
-            onClick={() => handleFilterChange("cursos.filters.iniciacion")}
-            className={`px-6 py-2 rounded-md transition-colors cursor-pointer ${
-              activeFilter === "cursos.filters.iniciacion"
-                ? "bg-rojo text-white"
-                : "bg-negro-secundario text-gray-300 hover:bg-gray-800"
-            }`}
-          >
-            <FormattedMessage id="cursos.filters.iniciacion" />
-          </button>
-          <button
-            onClick={() => handleFilterChange("cursos.filters.avanzados")}
-            className={`px-6 py-2 rounded-md transition-colors cursor-pointer ${
-              activeFilter === "cursos.filters.avanzados"
-                ? "bg-rojo text-white"
-                : "bg-negro-secundario text-gray-300 hover:bg-gray-800"
-            }`}
-          >
-            <FormattedMessage id="cursos.filters.avanzados" />
-          </button>
-          <button
-            onClick={() => handleFilterChange("cursos.filters.profesional")}
-            className={`px-6 py-2 rounded-md transition-colors cursor-pointer ${
-              activeFilter === "cursos.filters.profesional"
-                ? "bg-rojo text-white"
-                : "bg-negro-secundario text-gray-300 hover:bg-gray-800"
-            }`}
-          >
-            <FormattedMessage id="cursos.filters.profesional" />
-          </button>
+    <section className="section-space w-full">
+      <div className="grid items-end gap-7 md:grid-cols-[1fr_auto]">
+        <div>
+          <p className="eyebrow">Ruta de formación</p>
+          <h2 className="section-title mt-5 text-white"><FormattedMessage id="cursos.section.title" /></h2>
+          <p className="mt-5 text-white/55"><FormattedMessage id="cursos.section.subtitle" /></p>
         </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCursos.map((curso) => (
-            <Card
-              key={curso.slug}
-              className="group border-[#403d39] bg-negro-secundario pt-0 rounded-none"
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar cursos por nivel">
+          {filters.map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setActiveFilter(value)}
+              aria-pressed={activeFilter === value}
+              className={`min-h-11 border px-4 text-[.68rem] font-extrabold uppercase tracking-[.12em] transition-colors ${activeFilter === value ? "border-rojo bg-rojo text-white" : "border-white/15 text-white/60 hover:border-white/40 hover:text-white"}`}
             >
-              <div className="relative h-64 overflow-hidden">
-                <Image
-                  src={
-                    curso.cardImage || "/placeholder.svg?height=400&width=600"
-                  }
-                  alt={intl.formatMessage({ id: curso.title })}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  width={500}
-                  height={500}
-                />
-
-                <div className="absolute top-0 right-0 bg-rojo text-white px-3 py-1 text-sm font-medium">
-                  <FormattedMessage id={`${curso.level}`} />
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-white">
-                  <FormattedMessage id={curso.title} />
-                </h3>
-                <p className="text-gray-300 mb-4 line-clamp-3">
-                  <FormattedMessage id={curso.shortDescription} />
-                </p>
-                <ButtonRojo
-                  href={`/cursos/padi/${curso.slug}`}
-                  texto={intl.formatMessage({ id: "cursos.button.details" })}
-                  fullWidth={true}
-                />
-              </CardContent>
-            </Card>
+              <FormattedMessage id={label} />
+            </button>
           ))}
         </div>
+      </div>
+
+      <div className="mt-12 grid items-stretch gap-7 md:grid-cols-2 lg:grid-cols-3">
+        {filteredCursos.map((course, index) => (
+          <article key={course.slug} className="group flex h-full flex-col border border-white/10 bg-[#111416]">
+            <Link href={`/cursos/padi/${course.slug}`} className="relative block aspect-[4/3] overflow-hidden">
+              <SharedDetailTransition id={`course-${course.slug}`} role="image">
+                <Image src={course.cardImage} alt={intl.formatMessage({ id: course.title })} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+              </SharedDetailTransition>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <span className="absolute left-5 top-5 border border-white/25 bg-black/35 px-3 py-1.5 text-[.6rem] font-bold uppercase tracking-[.16em] text-white backdrop-blur-sm"><FormattedMessage id={course.level} /></span>
+            </Link>
+            <div className="flex flex-1 flex-col p-6 md:p-7">
+              <span className="text-[.6rem] font-bold uppercase tracking-[.18em] text-white/28">Curso 0{index + 1}</span>
+              <SharedDetailTransition id={`course-${course.slug}`} role="title">
+                <h3 className="mt-2 min-h-[3.75rem] font-display text-3xl font-bold uppercase leading-none text-white"><FormattedMessage id={course.title} /></h3>
+              </SharedDetailTransition>
+              <SharedDetailTransition id={`course-${course.slug}`} role="description">
+                <p className="mt-4 flex-1 text-sm leading-7 text-white/55"><FormattedMessage id={course.shortDescription} /></p>
+              </SharedDetailTransition>
+              <Link href={`/cursos/padi/${course.slug}`} className="mt-6 flex min-h-11 items-center justify-between border-t border-white/10 pt-5 text-xs font-extrabold uppercase tracking-[.11em] text-white">
+                <FormattedMessage id="cursos.button.details" />
+                <span className="grid size-9 place-items-center bg-rojo"><ArrowUpRight className="size-4" /></span>
+              </Link>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );

@@ -9,6 +9,7 @@ import RequerimientosSection from "@/components/excursiones/RequerimientosSectio
 import CallToActionSection from "@/components/excursiones/CallToActionSection";
 import GaleriaSection from "@/components/excursiones/GaleriaSection";
 import OtrasExcursioesSection from "@/components/excursiones/OtrasExcursionesSection";
+import { DetailStack } from "@/components/detail/DetailMotion";
 
 import esLocale from "@/app/locales/es.json";
 import enLocale from "@/app/locales/en.json";
@@ -82,52 +83,36 @@ export default async function ExcursionPage({ params }: ExcursionPageProps) {
   if (!excursion) notFound();
 
   return (
-    <>
-<HeroSection
+    <main className="detail-page">
+      <HeroSection
         title={excursion.title}
         heroImage={excursion.heroImage}
         miniDescription={excursion.miniDescription}
+        slug={excursion.slug}
         callToAction={excursion.callToAction[0]}
         altText={`${excursion.title}`}
       />
-      <section className="container flex flex-col items-center justify-center px-8 mx-auto py-20">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="lg:col-span-7 space-y-6">
-            <DescripcionSection
-              slug={excursion.slug}
-              description={excursion.description}
-            />
-          </div>
+      <div className="site-container">
+        <DescripcionSection slug={excursion.slug} description={excursion.description} />
 
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
+        <section className="pb-28 md:pb-40">
+          <DetailStack>
             <DetallesSection details={excursion.details} />
             <RequerimientosSection excursion={excursion} />
-          </div>
-
-          <div className="mb-12 mt-12">
             <QueEsperarSection excursion={excursion} />
-          </div>
+          </DetailStack>
+        </section>
 
-          <div className="mb-12 mt-12">
-            <CallToActionSection
-              callToAction={excursion.callToAction[0]}
-              buttonText={excursion.buttonText}
-            />
-          </div>
+        <section className="pb-28 md:pb-40">
+          <GaleriaSection galleryImages={excursion.galleryImages} galleryVideos={excursion.galleryVideos} title={excursion.title} />
+        </section>
 
-          <div className="mb-12 mt-12">
-            <GaleriaSection
-              galleryImages={excursion.galleryImages}
-              galleryVideos={excursion.galleryVideos}
-              title={excursion.title}
-            />
-          </div>
-        </div>
-      </section>
+        <section className="pb-28 md:pb-40">
+          <CallToActionSection callToAction={excursion.callToAction[0]} buttonText={excursion.buttonText} />
+        </section>
+      </div>
 
       <OtrasExcursioesSection excursion={excursion} />
-
-    </>
+    </main>
   );
 }
-

@@ -1,258 +1,77 @@
 "use client";
 
-import { Star } from "lucide-react";
-import { Card, CardContent } from "../ui/card";
-import {
-  motion,
-  useAnimation,
-  AnimatePresence,
-  type Variants,
-} from "framer-motion";
-import { Reseña } from "@/lib/types/reseñas";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { useEffect } from "react";
-import { reseñas } from "@/lib/data/Reseñas";
-import { FormattedMessage, useIntl } from "react-intl";
 import Image from "next/image";
-
-const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+import Link from "next/link";
+import { ArrowUpRight, Quote, Star } from "lucide-react";
+import { motion } from "framer-motion";
+import { FormattedMessage, useIntl } from "react-intl";
+import { reseñas } from "@/lib/data/Reseñas";
 
 export default function ReseñasSection() {
-  const controls = useAnimation();
   const intl = useIntl();
 
-  useEffect(() => {
-    controls.start("visible");
-  }, [controls]);
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const titleVariants: Variants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: EASE_OUT,
-      },
-    },
-  };
-
-  const cardContainerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const buttonVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.8,
-        duration: 0.5,
-        ease: EASE_OUT,
-      },
-    },
-    hover: {
-      scale: 1.05,
-      boxShadow:
-        "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-      transition: {
-        duration: 0.3,
-      },
-    },
-  };
-
   return (
-    <section className="py-12 bg-negro-secundario overflow-hidden">
-      <motion.div
-        className="container flex flex-col items-center justify-center px-8 mx-auto"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={containerVariants}
-      >
-        <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-center text-white mb-4 uppercase font-oceanica tracking-wide shadow-md"
-          variants={titleVariants}
-        >
-          <FormattedMessage id="home.reseñas.title" />
-        </motion.h2>
-
-        <motion.p
-          className="text-center text-white max-w-3xl mx-auto mb-12"
-          variants={titleVariants}
-          dangerouslySetInnerHTML={{
-            __html: intl.formatMessage({
-              id: "home.reseñas.description",
-            }),
-          }}
-        />
-
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={cardContainerVariants}
-        >
-          <AnimatePresence>
-            {reseñas.map((reseña, index) => (
-              <ReseñaCard key={reseña.id} reseña={reseña} index={index} />
-            ))}
-          </AnimatePresence>
-        </motion.div>
-
-        <motion.div
-          className="mt-12 flex items-center justify-center"
-          variants={buttonVariants}
-          whileHover="hover"
-        >
+    <section className="section-space border-t border-white/10 bg-[#111416]">
+      <div className="site-container">
+        <div className="grid items-end gap-8 md:grid-cols-[1fr_auto]">
+          <div>
+            <p className="eyebrow">Experiencias verificadas</p>
+            <h2 className="section-title mt-5 max-w-[12ch] text-white">
+              <FormattedMessage id="home.reseñas.title" />
+            </h2>
+          </div>
           <Link
-            target="_blank"
             href="https://www.google.com/search?q=madryn+buceo"
-            className="w-full flex justify-center"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex min-h-12 items-center gap-3 text-xs font-extrabold uppercase tracking-[.12em] text-white"
           >
-            <Button className="bg-white hover:bg-white text-black text-lg font-semibold cursor-pointer flex items-center gap-2">
-              <Image
-                src="https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/inicio/google_bx9cwm.png"
-                alt="Google"
-                width={24}
-                height={24}
-              />
-              <FormattedMessage id="home.reseñas.button" />
-            </Button>
+            <Image src="https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/inicio/google_bx9cwm.png" alt="Google" width={22} height={22} />
+            <FormattedMessage id="home.reseñas.button" />
+            <ArrowUpRight className="size-4 text-rojo transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-}
+        </div>
 
-function ReseñaCard({ reseña, index }: { reseña: Reseña; index: number }) {
-  const cardVariants: Variants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        delay: index * 0.1,
-        ease: EASE_OUT,
-      },
-    },
-    hover: {
-      y: -10,
-      boxShadow:
-        "0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)",
-      transition: {
-        duration: 0.3,
-        ease: EASE_OUT,
-      },
-    },
-  };
-
-  const starContainerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3 + index * 0.1,
-      },
-    },
-  };
-
-  const starVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.5 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: EASE_OUT,
-      },
-    },
-  };
-
-  return (
-    <motion.div variants={cardVariants} whileHover="hover" className="h-full">
-      <Card className="border-none h-full shadow-lg bg-negro rounded-none text-white">
-        <CardContent className="p-6">
-          <motion.div
-            className="flex items-center mb-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-          >
-            <div className="relative h-10 w-10 rounded-full overflow-hidden mr-3">
-              <Image
-                src={reseña.image || "/placeholder.svg"}
-                alt={reseña.name}
-                className="absolute inset-0 w-full h-full object-cover"
-                width={40}
-                height={40}
-              />
-            </div>
-            <div>
-              <h4 className="font-medium">
-                <FormattedMessage id={reseña.name} />
-              </h4>
-              <p className="text-xs">
-                <FormattedMessage id={reseña.date} />
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="flex mb-4 items-center"
-            variants={starContainerVariants}
-          >
-            <Image
-              src="https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/inicio/google_bx9cwm.png"
-              alt="Google"
-              width={20}
-              height={20}
-              className="mr-2"
-            />
-
-            {[...Array(5)].map((_, i) => (
-              <motion.div key={i} variants={starVariants}>
-                <Star
-                  className={`h-5 w-5 ${i < reseña.rating
-                      ? "text-yellow-400 fill-yellow-400"
-                      : "text-gray-400"
-                    }`}
+        <motion.div
+          className="mt-14 grid items-stretch gap-7 lg:grid-cols-3"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+        >
+          {reseñas.map((review, index) => (
+            <motion.article
+              key={review.id}
+              className="relative flex min-h-[22rem] flex-col border border-white/10 bg-[#111416] p-7 md:p-9"
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            >
+              <Quote className="absolute right-7 top-7 size-10 text-rojo/20" />
+              <div className="flex gap-1 text-[#f2bd4d]" role="img" aria-label={`${review.rating} de 5 estrellas`}>
+                {Array.from({ length: 5 }).map((_, star) => (
+                  <Star key={star} className="size-4 fill-current" aria-hidden="true" />
+                ))}
+              </div>
+              <blockquote className="mt-7 flex-1 text-base leading-8 text-white/72">
+                “<FormattedMessage id={review.text} />”
+              </blockquote>
+              <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-5">
+                <Image
+                  src={review.image}
+                  alt=""
+                  width={42}
+                  height={42}
+                  className="size-10 rounded-sm object-cover"
                 />
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.p
-            className="text-md line-clamp-5"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-          >
-            <FormattedMessage id={reseña.text} />
-          </motion.p>
-        </CardContent>
-      </Card>
-    </motion.div>
+                <div>
+                  <p className="font-display text-lg font-bold uppercase text-white"><FormattedMessage id={review.name} /></p>
+                  <p className="text-[.65rem] uppercase tracking-[.12em] text-white/38">{intl.formatMessage({ id: review.date })} · Google</p>
+                </div>
+              </div>
+              <span className="absolute bottom-7 right-7 font-display text-lg font-bold text-white/12">0{index + 1}</span>
+            </motion.article>
+          ))}
+        </motion.div>
+      </div>
+    </section>
   );
 }

@@ -1,32 +1,25 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Button } from "./button";
-import { ArrowRight } from "lucide-react";
-import { ReactNode } from "react";
-
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface ButtonNegroProps {
-    texto: ReactNode;
-    href: string;
-    fullWidth?: boolean;
+  texto: ReactNode;
+  href: string;
+  fullWidth?: boolean;
 }
 
 export default function ButtonNegro({ texto, href, fullWidth = false }: ButtonNegroProps) {
-    const router = useRouter();
-
-    const handleClick = () => {
-        router.push(href);
-    };
-
-    return (
-        <Button
-            size="lg"
-            onClick={handleClick}
-            className={`group bg-negro-secundario rounded-sm border border-rojo hover:bg-negro-secundario text-rojo transition-all duration-300 text-lg font-semibold cursor-pointer ${fullWidth ? 'w-full' : ''}`}
-        >
-            {texto}
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-all duration-300" />
-        </Button>
-    );
+  return (
+    <Link
+      href={href}
+      target={href.startsWith("http") ? "_blank" : undefined}
+      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      className={`group inline-flex min-h-12 items-center justify-center gap-3 border border-white/25 bg-transparent px-6 text-sm font-extrabold uppercase tracking-[.08em] text-white transition-[border-color,background-color,transform] duration-200 hover:-translate-y-0.5 hover:border-rojo hover:bg-white/[.05] active:translate-y-0 ${fullWidth ? "w-full" : ""}`}
+    >
+      {texto}
+      <ArrowUpRight className="size-4 text-rojo transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+    </Link>
+  );
 }

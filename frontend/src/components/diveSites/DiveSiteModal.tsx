@@ -1,147 +1,116 @@
 "use client";
 
-import React from "react";
-import { DiveSite } from "@/lib/data/ArrayDiveSites";
-import ImageGallery from "./ImageGallery";
-import { BadgeCheck, Ruler, Gauge, MapPinned } from "lucide-react";
+import { useEffect, useRef, ViewTransition } from "react";
+import { BadgeCheck, Gauge, MapPinned, Ruler, X } from "lucide-react";
 import { FormattedMessage } from "react-intl";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import type { DiveSite } from "@/lib/data/ArrayDiveSites";
+import ButtonRojo from "@/components/ui/button-rojo";
+import ImageGallery from "./ImageGallery";
+import { DetailEnterTransition, SharedDetailTransition } from "@/components/detail/SharedDetailTransition";
 
 interface DiveSiteModalProps {
   isOpen: boolean;
   site: DiveSite | null;
   closeModal: () => void;
-  handleGoBack?: () => void;
 }
 
-const modalVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.16, 1, 0.3, 1], // easeOut
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: 20,
-    transition: {
-      duration: 0.2,
-      ease: [0.4, 0, 1, 1], // easeIn
-    },
-  },
-};
+export default function DiveSiteModal({ isOpen, site, closeModal }: DiveSiteModalProps) {
+  const closeButton = useRef<HTMLButtonElement>(null);
 
-const DiveSiteModal: React.FC<DiveSiteModalProps> = ({
-  isOpen,
-  site,
-  closeModal,
-}) => {
-  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) {
-      closeModal();
-    }
-  };
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButton.current?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeModal();
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [closeModal, isOpen]);
+
+  if (!isOpen || !site) return null;
+
+  const transitionId = `dive-site-${site.name}`;
 
   return (
-    <AnimatePresence>
-      {isOpen && site && (
-        <motion.div
-          className="fixed inset-0 bg-black/50 z-[2000] flex justify-center items-center p-4"
-          variants={modalVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          onClick={handleOverlayClick}
-        >
-          <motion.div
-            className="bg-[#252422] rounded-xl w-full max-w-5xl max-h-[96vh] overflow-hidden"
-            variants={modalVariants}
+        <div className="fixed inset-0 z-[2000] grid place-items-center overflow-y-auto p-3 md:p-8">
+          <ViewTransition enter="dive-modal-backdrop-enter" exit="dive-modal-backdrop-exit" default="none">
+            <button
+              type="button"
+              aria-label="Cerrar detalle"
+              onClick={closeModal}
+              className="fixed inset-0 cursor-default bg-black/84 backdrop-blur-sm"
+            />
+          </ViewTransition>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dive-site-title"
+            className="relative z-10 my-auto w-full max-w-7xl overflow-hidden border border-white/14 bg-[#0d1011]"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4 md:p-6">
-              <div className="lg:col-span-2">
+            <button
+              ref={closeButton}
+              type="button"
+              onClick={closeModal}
+              aria-label="Cerrar detalle"
+              className="absolute right-3 top-3 z-20 grid size-12 cursor-pointer place-items-center border border-white/25 bg-black/75 text-white transition-colors hover:border-rojo hover:bg-rojo md:right-5 md:top-5"
+            >
+              <X className="size-5" aria-hidden />
+            </button>
+
+            <div className="grid lg:grid-cols-[1.55fr_.8fr]">
+              <SharedDetailTransition id={transitionId} role="image">
                 <ImageGallery media={site.media} />
-              </div>
+              </SharedDetailTransition>
 
-              <div className="flex flex-col justify-between">
+              <div className="flex flex-col justify-between p-7 md:p-10 lg:p-12">
                 <div>
-                  <h3 className="text-xl font-bold text-rojo mb-2">
-                    <FormattedMessage id={site.name} />
-                  </h3>
-                  <p className="text-white/80 text-sm mb-4">
-                    <FormattedMessage id={site.description} />
+                  <p className="text-xs font-bold uppercase tracking-[.15em] text-rojo">
+                    <FormattedMessage id="diveSites.detailLabel" defaultMessage="Ficha de inmersión" />
                   </p>
-
-                  <div className="grid grid-cols-1 gap-2 text-sm text-white/80 mb-4">
-                    <p className="flex items-center gap-2">
-                      <Gauge className="w-5 h-5 text-rojo" />
-                      <strong>
-                        <FormattedMessage
-                          id="diveSite.difficulty"
-                          defaultMessage="Difficulty"
-                        />
-                        :
-                      </strong>{" "}
-                      <FormattedMessage id={site.difficulty} />
+                  <SharedDetailTransition id={transitionId} role="title">
+                    <h2 id="dive-site-title" className="mt-5 text-4xl font-bold uppercase leading-[.92] tracking-[-.04em] text-white md:text-5xl">
+                      <FormattedMessage id={site.name} />
+                    </h2>
+                  </SharedDetailTransition>
+                  <DetailEnterTransition>
+                    <p className="mt-7 text-base leading-8 text-white/65">
+                      <FormattedMessage id={site.description} />
                     </p>
+                  </DetailEnterTransition>
 
-                    <p className="flex items-center gap-2">
-                      <Ruler className="w-5 h-5 text-rojo" />
-                      <strong>
-                        <FormattedMessage id="depth" defaultMessage="Depth" />:
-                      </strong>{" "}
-                      <FormattedMessage id={site.depth} />
-                    </p>
-
-                    <p className="flex items-center gap-2">
-                      <BadgeCheck className="w-5 h-5 text-rojo" />
-                      <strong>
-                        <FormattedMessage
-                          id="certification"
-                          defaultMessage="Certification"
-                        />
-                        :
-                      </strong>{" "}
-                      {site.certification}
-                    </p>
-
-                    <p className="flex items-center gap-2">
-                      <MapPinned className="w-5 h-5 text-rojo" />
-                      <strong>
-                        <FormattedMessage
-                          id="diveSite.time"
-                          defaultMessage="Distance"
-                        />
-                        :
-                      </strong>{" "}
-                      {site.time}
-                    </p>
-                  </div>
+                  <dl className="mt-10 grid grid-cols-2 gap-px bg-white/10">
+                    {[
+                      [Gauge, "diveSite.difficulty", site.difficulty, true],
+                      [Ruler, "depth", site.depth, true],
+                      [BadgeCheck, "certification", site.certification, false],
+                      [MapPinned, "diveSite.time", site.time, false],
+                    ].map(([Icon, label, value, translated]) => {
+                      const FactIcon = Icon as typeof Gauge;
+                      return (
+                        <div key={String(label)} className="min-h-32 bg-[#111416] p-5">
+                          <FactIcon className="size-5 text-rojo" strokeWidth={1.8} aria-hidden />
+                          <dt className="mt-4 text-[.67rem] font-bold uppercase tracking-[.13em] text-white/40"><FormattedMessage id={String(label)} /></dt>
+                          <dd className="mt-1 text-sm font-semibold text-white">{translated ? <FormattedMessage id={String(value)} /> : String(value)}</dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
                 </div>
 
-                <div className="mt-4">
-                  <button
-                    onClick={closeModal}
-                    className="w-full py-2 px-4 bg-rojo text-white rounded-lg hover:bg-rojo/80 transition cursor-pointer"
-                  >
-                    <FormattedMessage
-                      id="diveSite.close"
-                      defaultMessage="Close"
-                    />
-                  </button>
+                <div className="mt-9">
+                  <ButtonRojo texto={<FormattedMessage id="requestInfo" defaultMessage="Consultar salida" />} href="/contacto" fullWidth />
                 </div>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </div>
+        </div>
   );
-};
-
-export default DiveSiteModal;
+}

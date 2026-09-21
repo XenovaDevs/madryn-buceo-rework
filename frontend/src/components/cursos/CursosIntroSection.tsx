@@ -1,4 +1,4 @@
-import { Award, SeparatorHorizontal } from "lucide-react";
+import { Award } from "lucide-react";
 import { FormattedMessage, useIntl } from "react-intl";
 import Image from "next/image";
 
@@ -10,71 +10,71 @@ export default function CursosIntroSection() {
 
   const intl = useIntl();
   return (
-    <section className="mb-20 relative">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+    <section className="section-space relative w-full pb-4">
+      <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-2 lg:gap-16">
         <div className="flex flex-col justify-center">
-          <div className="mb-4 w-36 inline-flex items-center justify-center rounded-lg bg-muted px-4 py-1.5 text-lg font-medium">
+          <div className="mb-5 inline-flex w-32 items-center justify-center bg-white p-2">
             <Image
               src={logo}
               alt="Certificación PADI"
-              width={100}
-              height={100}
-              className="object-cover"
+              width={128}
+              height={48}
+              className="object-contain"
             />
           </div>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 inline-flex items-center relative uppercase">
+          <p className="eyebrow">Centro PADI oficial</p>
+          <h2 className="section-title mt-5 mb-7 text-white">
             <FormattedMessage id="courses.padi.subTitle.1" />
           </h2>
 
-          <SeparatorHorizontal className="w-full h-1 bg-rojo mb-6 rounded-full" />
-
           <p
-            className="text-white/80 mb-4 leading-relaxed"
+            className="text-white/60 mb-4 leading-8 [&_span]:!text-rojo"
             dangerouslySetInnerHTML={{
-              __html: intl.formatMessage({ id: "courses.padi.description.1" }),
+              __html: String(intl.messages["courses.padi.description.1"] ?? ""),
             }}
           />
 
           <p
-            className="text-white/80 mb-4 leading-relaxed"
+            className="text-white/60 mb-4 leading-8 [&_span]:!text-rojo"
             dangerouslySetInnerHTML={{
-              __html: intl.formatMessage({ id: "courses.padi.description.2" }),
+              __html: String(intl.messages["courses.padi.description.2"] ?? ""),
             }}
           />
 
           <p
-            className="text-white/80 mb-4 leading-relaxed"
+            className="text-white/60 mb-4 leading-8 [&_span]:!text-rojo"
             dangerouslySetInnerHTML={{
-              __html: intl.formatMessage({ id: "courses.padi.description.3" }),
+              __html: String(intl.messages["courses.padi.description.3"] ?? ""),
             }}
           />
 
           <p
-            className="text-white/80 mb-4 leading-relaxed"
+            className="text-white/60 mb-4 leading-8 [&_span]:!text-rojo"
             dangerouslySetInnerHTML={{
-              __html: intl.formatMessage({ id: "courses.padi.description.4" }),
+              __html: String(intl.messages["courses.padi.description.4"] ?? ""),
             }}
           />
 
           <p
-            className="text-white/80 mb-4 leading-relaxed"
+            className="text-white/60 mb-4 leading-8 [&_span]:!text-rojo"
             dangerouslySetInnerHTML={{
-              __html: intl.formatMessage({ id: "courses.padi.description.5" }),
+              __html: String(intl.messages["courses.padi.description.5"] ?? ""),
             }}
           />
         </div>
 
-        <div className="relative overflow-hidden rounded-xl">
+        <div className="relative min-h-[32rem] overflow-hidden">
           <Image
             src={imagen}
             alt="Buceo en Puerto Madryn"
-            className="absolute inset-0 w-full h-full object-cover aspect-[4/3]"
+            className="absolute inset-0 w-full h-full object-cover"
             width={800}
             height={600}
+            priority
           />
 
-          <div className="absolute bottom-4 left-4 z-20 bg-negro/80 backdrop-blur-sm p-3 rounded-lg border border-[#403d39]">
+          <div className="absolute bottom-5 left-5 z-20 border border-white/20 bg-black/60 p-3 backdrop-blur-sm">
             <div className="inline-flex items-center text-white font-medium text-sm">
               <Award className="w-4 h-4 mr-2" />
               <FormattedMessage id="courses.padi.badge.1" />

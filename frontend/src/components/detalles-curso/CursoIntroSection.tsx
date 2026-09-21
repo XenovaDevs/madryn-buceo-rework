@@ -1,8 +1,9 @@
+"use client";
 
-import { Badge } from "../ui/badge";
-import { Clock, ArrowDown, Check } from "lucide-react";
-import { ReactNode } from "react";
-import Image from "next/image";
+import type { ReactNode } from "react";
+import { Anchor, Award, Clock } from "lucide-react";
+import { FormattedMessage } from "react-intl";
+import DetailHero from "@/components/detail/DetailHero";
 
 interface CursoIntroSectionProps {
   title: ReactNode;
@@ -12,60 +13,44 @@ interface CursoIntroSectionProps {
   depth?: ReactNode;
   cardImage: string;
   level: ReactNode;
+  slug: string;
 }
 
-export default function CursoIntroSection({
-  title,
-  shortDescription,
-  certification,
-  duration,
-  depth,
-  cardImage,
-  level,
-}: CursoIntroSectionProps) {
+export default function CursoIntroSection({ title, shortDescription, certification, duration, depth, cardImage, level, slug }: CursoIntroSectionProps) {
+  const facts = [
+    duration ? { id: "duration", icon: Clock, label: <FormattedMessage id="time" defaultMessage="Duración" />, value: duration } : null,
+    depth ? { id: "depth", icon: Anchor, label: <FormattedMessage id="depth" defaultMessage="Profundidad" />, value: depth } : null,
+    certification ? { id: "certification", icon: Award, label: <FormattedMessage id="certification" defaultMessage="Certificación" />, value: certification } : null,
+  ].filter(Boolean) as { id: string; icon: typeof Clock; label: ReactNode; value: ReactNode }[];
+
   return (
     <>
-      <section className="h-[50vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 mask-fade-bottom">
-          <Image
-            src={cardImage}
-            alt="Hero"
-            className="absolute inset-0 w-full h-full object-cover z-0"
-            width={1920}
-            height={1080}
-          />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
+      <DetailHero
+        title={title}
+        subtitle={shortDescription}
+        image={cardImage}
+        alt="Curso de buceo PADI en Puerto Madryn"
+        parentHref="/cursos/padi"
+        parentLabel={<FormattedMessage id="nav.courses" defaultMessage="Cursos PADI" />}
+        actionHref="/contacto"
+        actionLabel={<FormattedMessage id="requestInfo" defaultMessage="Consultar curso" />}
+        transitionId={`course-${slug}`}
+      />
 
-        <div className="container mx-auto relative h-full flex flex-col justify-end pb-12 px-6 text-white">
-          <div className="inline-block bg-ocean rounded text-sm font-semibold mb-2">
-            <Badge className="bg-rojo uppercase text-base font-semibold font-oceanica">
-              {level}
-            </Badge>
+      <section className="border-b border-white/10 bg-[#111416]">
+        <div className="site-container grid gap-px bg-white/10 md:grid-cols-4">
+          <div className="flex min-h-28 items-center bg-[#111416] px-6 py-6">
+            <p className="text-xs font-extrabold uppercase tracking-[.13em] text-rojo">{level}</p>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-2">{title}</h1>
-          <p className="text-xl opacity-90 max-w-2xl">{shortDescription}</p>
-
-          <div className="flex flex-wrap gap-4 mt-4">
-            {duration && (
-              <div className="flex items-center">
-                <Clock className="w-5 h-5 mr-2" />
-                <span>{duration}</span>
+          {facts.map(({ id, icon: Icon, label, value }) => (
+            <div key={id} className="grid min-h-28 grid-cols-[auto_1fr] items-center gap-4 bg-[#111416] px-6 py-6">
+              <Icon className="size-5 text-rojo" strokeWidth={1.8} aria-hidden="true" />
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[.1em] text-white/40">{label}</p>
+                <p className="mt-1 text-base font-semibold text-white">{value}</p>
               </div>
-            )}
-            {depth && (
-              <div className="flex items-center">
-                <ArrowDown className="w-5 h-5 mr-2" />
-                <span>Profundidad: {depth}</span>
-              </div>
-            )}
-            {certification && (
-              <div className="flex items-center">
-                <Check className="w-5 h-5 mr-2" />
-                <span>{certification}</span>
-              </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
       </section>
     </>

@@ -1,198 +1,65 @@
 "use client";
 
-import React, { ReactNode } from "react";
-import ImageGallery from "./ImageGallery";
-import { Card, CardContent } from "@/components/ui/card";
-import { motion, useInView, type Variants } from "framer-motion";
-import { useRef } from "react";
-import { FileClock, House, Users } from "lucide-react";
-import { FormattedMessage } from "react-intl";
 import Image from "next/image";
+import { FormattedMessage } from "react-intl";
 
-const EASE_OUT = [0.16, 1, 0.3, 1] as const;
-
-
-const historyMedia: { type: "image" | "video"; url: string }[] = [
-  { url: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/nosotros/GaleriaLocal/galeriaLocal2_nxa28x.webp", type: "image" },
-  { url: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/nosotros/GaleriaLocal/galeriaLocal1_xagqad.webp", type: "image" },
-  { url: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/nosotros/GaleriaLocal/galeriaLocal3_wrb28t.webp", type: "image" },
-];
+const stories = [
+  {
+    number: "01",
+    title: "our.store",
+    description: "our.store2",
+    media: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/nosotros/GaleriaLocal/galeriaLocal2_nxa28x.webp",
+    type: "image",
+  },
+  {
+    number: "02",
+    title: "our.history",
+    description: "our.history2",
+    media: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/videos/nosotros/docu_wtmto4.mp4",
+    type: "video",
+  },
+  {
+    number: "03",
+    title: "our.staff",
+    description: "our.staff2",
+    media: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/nosotros/staff_nrcxj9.jpg",
+    type: "image",
+  },
+] as const;
 
 export function AboutCardsSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.3,
-      },
-    },
-  };
-
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
-
   return (
-    <motion.section
-      className="mt-26 mb-6"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={fadeIn}
-    >
-      <section ref={ref}>
-        <div className="container mx-auto px-8">
-          <motion.div
-            className="mt-16 mb-10 grid grid-cols-1 md:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-          >
-            <AboutCard
-              title={
-                <div className="flex items-center gap-2">
-                  <House className="h-6 w-6 text-rojo" />
-                  <FormattedMessage id={"our.store"} />
-                </div>
-              }
-              description={
-                <FormattedMessage id={"our.store2"} />
-              }>
-              <ImageGallery
-                media={historyMedia}
-                className="absolute inset-0 w-full h-full"
-                style={{ borderRadius: 0 }} />
-            </AboutCard>
-
-
-            <AboutCard
-              title={
-                <div className="flex items-center gap-2">
-                  <FileClock className="h-6 w-6 text-rojo" />
-                  <FormattedMessage id={"our.history"} />
-                </div>
-              }
-              description={
-                <FormattedMessage id={"our.history2"} />
-              }
-              videoSrc="https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/videos/nosotros/docu_wtmto4.mp4"
-            >
-            </AboutCard>
-
-            <AboutCard
-              title={
-                <div className="flex items-center gap-2">
-                  <Users className="h-6 w-6 text-rojo" />
-                  <FormattedMessage id={"our.staff"} />
-                </div>
-              }
-              description={<FormattedMessage id={"our.staff2"} />}
-              imageSrc="https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/nosotros/staff_nrcxj9.jpg"
-            />
-          </motion.div>
+    <section className="section-space">
+      <div className="site-container">
+        <div className="grid items-end gap-8 md:grid-cols-[1fr_.75fr]">
+          <div>
+            <p className="eyebrow">Dos generaciones, un mismo mar</p>
+            <h2 className="section-title mt-5 max-w-[12ch] text-white">Nuestra forma de vivir el buceo</h2>
+          </div>
+          <p className="text-base leading-8 text-white/55">El centro de buceo más antiguo de la zona sigue siendo una casa abierta para quienes quieren conocer el Golfo Nuevo.</p>
         </div>
-      </section>
-    </motion.section>
-  );
-}
 
-function AboutCard({
-  title,
-  description,
-  imageSrc,
-  videoSrc,
-  children,
-}: {
-  title: ReactNode;
-  description: ReactNode;
-  imageSrc?: string;
-  videoSrc?: string;
-  children?: React.ReactNode;
-}) {
-  const cardVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: EASE_OUT, // ✅ FIX
-      },
-    },
-    hover: {
-      scale: 1.02,
-      transition: {
-        duration: 0.3,
-      },
-    },
-  };
-
-  const contentVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delay: 0.2,
-        duration: 0.4,
-      },
-    },
-  };
-
-
-  return (
-    <motion.div
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover="hover"
-    >
-      <Card
-        className="overflow-hidden h-full flex flex-col shadow-lg bg-[#252422] border-[#403d39] hover:shadow-xl transition-shadow p-0"
-        style={{ borderRadius: 0 }}
-      >
-        <div className="relative h-64" style={{ borderRadius: 0 }}>
-          {imageSrc && (
-            <Image
-              src={imageSrc}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300"
-              style={{ borderRadius: 0 }}
-              width={800}
-              height={600}
-            />
-
-          )}
-          {videoSrc && (
-            <video
-              controls
-              className="w-full h-full object-cover"
-              style={{ borderRadius: 0 }}
-            >
-              <source src={videoSrc} type="video/mp4" />
-              <FormattedMessage id={"browser"} />
-            </video>
-          )}
-          {children}
+        <div className="mt-14 space-y-8">
+          {stories.map((story, index) => (
+            <article key={story.title} className="grid overflow-hidden border border-white/10 bg-[#0d1011] lg:grid-cols-2">
+              <div className={`relative min-h-[24rem] overflow-hidden ${index % 2 ? "lg:order-2" : ""}`}>
+                {story.type === "image" ? (
+                  <Image src={story.media} alt="" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+                ) : (
+                  <video controls preload="metadata" className="size-full object-cover" aria-label="Documental sobre la historia de Madryn Buceo">
+                    <source src={story.media} type="video/mp4" />
+                  </video>
+                )}
+              </div>
+              <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
+                <span className="font-display text-2xl font-bold text-rojo">{story.number}</span>
+                <h3 className="mt-4 font-display text-4xl font-bold uppercase text-white md:text-5xl"><FormattedMessage id={story.title} /></h3>
+                <p className="mt-6 whitespace-pre-line text-sm leading-7 text-white/58 md:text-base md:leading-8"><FormattedMessage id={story.description} /></p>
+              </div>
+            </article>
+          ))}
         </div>
-        <CardContent className="text-white flex flex-col flex-grow p-4">
-          <motion.div className="mb-4" variants={contentVariants}>
-            <h3 className="text-white font-bold font-oceanica tracking-tight line-clamp-1">
-              {title}
-            </h3>
-          </motion.div>
-          <motion.p
-            className="text-white/80 text-sm flex-grow whitespace-pre-line "
-            variants={contentVariants}
-          >
-            {description}
-          </motion.p>
-        </CardContent>
-      </Card>
-    </motion.div>
+      </div>
+    </section>
   );
 }

@@ -1,15 +1,32 @@
 // app/layout.tsx
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Barlow_Condensed, Manrope, Outfit } from "next/font/google"
 import "./globals.css"
 import Header from "@/components/layout/Header"
 import Footer from "../components/layout/Footer"
 import "leaflet/dist/leaflet.css"
 import WhatsAppButton from "@/components/ui/WhatsAppButton"
 import ClientIntlProvider from "./ClientIntlProvider"
-import Script from "next/script"
+import CookieConsent from "@/components/ui/CookieConsent"
 
-const inter = Inter({ subsets: ["latin"] })
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+})
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+})
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-detail",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "Madryn Buceo | Aventuras Submarinas en Puerto Madryn",
@@ -61,46 +78,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
-      <head>
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-P62Y9L646D"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-P62Y9L646D');
-          `}
-        </Script>
-
-        {/* Meta Pixel */}
-        <Script id="meta-pixel" strategy="afterInteractive">
-          {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '1048777207441355');
-            fbq('track', 'PageView');
-          `}
-        </Script>
-        <noscript>
-        </noscript>
-      </head>
-      <body className={inter.className}>
+    <html lang="es" data-scroll-behavior="smooth">
+      <body className={`${manrope.variable} ${barlowCondensed.variable} ${outfit.variable}`}>
+        <a href="#contenido-principal" className="skip-link">
+          Saltar al contenido
+        </a>
         <ClientIntlProvider locale="es">
           <Header />
-          {children}
+          <div id="contenido-principal">{children}</div>
           <Footer />
           <WhatsAppButton />
+          <CookieConsent />
         </ClientIntlProvider>
       </body>
     </html>

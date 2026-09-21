@@ -1,5 +1,4 @@
 "use client"
-//
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -81,7 +80,6 @@ export default function ContactoForm() {
   const intl = useIntl()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle")
-  const [showNotification, setShowNotification] = useState(false)
   const [selectedCountryCode, setSelectedCountryCode] = useState("+54")
 
   const formSchema = z.object({
@@ -94,8 +92,8 @@ export default function ContactoForm() {
     phone: z.string().min(8, {
       message: intl.formatMessage({ id: "contact.form.phone.error" }),
     }),
-    subject: z.string({
-      required_error: intl.formatMessage({ id: "contact.form.subject.error" }),
+    subject: z.string().min(1, {
+      message: intl.formatMessage({ id: "contact.form.subject.error" }),
     }),
     message: z.string().min(10, {
       message: intl.formatMessage({ id: "contact.form.message.error" }),
@@ -110,19 +108,15 @@ export default function ContactoForm() {
       name: "",
       email: "",
       phone: "+54",
-      subject: undefined,
+      subject: "",
       message: "",
     },
   })
 
   useEffect(() => {
     if (formStatus !== "idle") {
-      setShowNotification(true)
       const timer = setTimeout(() => {
-        setShowNotification(false)
-        if (formStatus === "success") {
-          setFormStatus("idle")
-        }
+        setFormStatus("idle")
       }, 5000)
       return () => clearTimeout(timer)
     }
@@ -140,7 +134,6 @@ export default function ContactoForm() {
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true)
     setFormStatus("idle")
-    setShowNotification(false)
     try {
       const result = await sendEmail(data)
       if (result.success) {
@@ -161,10 +154,8 @@ export default function ContactoForm() {
   return (
     <>
       {/* Notification */}
-      {showNotification && (
-        <div className={`fixed top-4 right-4 z-50 max-w-md w-full transition-all duration-300 transform ${
-          showNotification ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
-        }`}>
+      {formStatus !== "idle" && (
+        <div role="status" aria-live="polite" className="fixed top-24 right-4 z-50 max-w-md w-[calc(100%-2rem)] translate-x-0 opacity-100 transition-all duration-300">
           <div className={`rounded-lg p-4 shadow-lg border-l-4 ${
             formStatus === "success" 
               ? "bg-green-50 border-green-400 text-green-800" 
@@ -181,7 +172,7 @@ export default function ContactoForm() {
               <div className="ml-3 flex-1">
                 <h3 className="text-sm font-medium">
                   {formStatus === "success" ? (
-                    <FormattedMessage id="contact.form.success.title" defaultMessage="¡Mensaje enviado!" />
+                    <FormattedMessage id="contact.form.success.title" defaultMessage="Mensaje enviado" />
                   ) : (
                     <FormattedMessage id="contact.form.error.title" defaultMessage="Error al enviar" />
                   )}
@@ -197,8 +188,9 @@ export default function ContactoForm() {
               <div className="ml-4 flex-shrink-0">
                 <button
                   type="button"
-                  onClick={() => setShowNotification(false)}
+                  onClick={() => setFormStatus("idle")}
                   className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  aria-label="Cerrar notificación"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -223,7 +215,7 @@ export default function ContactoForm() {
                   <Input
                     placeholder={intl.formatMessage({ id: "contact.form.name.placeholder" })}
                     {...field}
-                    className="bg-negro border-none text-white placeholder:text-white/70 focus:ring-0 focus:border-none"
+                    className="h-12 rounded-none px-4 text-white"
                   />
                 </FormControl>
                 <FormMessage />
@@ -243,7 +235,7 @@ export default function ContactoForm() {
                   <Input
                     placeholder={intl.formatMessage({ id: "contact.form.email.placeholder" })}
                     {...field}
-                    className="bg-negro border-none text-white placeholder:text-white/70 focus:ring-0 focus:border-none"
+                    className="h-12 rounded-none px-4 text-white"
                   />
                 </FormControl>
                 <FormMessage />
@@ -272,7 +264,7 @@ export default function ContactoForm() {
                         }
                       }}
                     >
-                      <SelectTrigger className="bg-negro border-none text-white focus:ring-0 focus:border-none rounded-r-none cursor-pointer">
+                      <SelectTrigger className="h-12 rounded-none border-r-0 text-white cursor-pointer">
                         <SelectValue>
                           <span className="flex items-center">
                             {/* {countryCodes.find(c => c.code === selectedCountryCode)?.flag}  */}
@@ -288,7 +280,7 @@ export default function ContactoForm() {
                             className="focus:bg-rojo focus:text-white cursor-pointer bg-negro hover:bg-negro-secundario"
                           >
                             <span className="flex items-center">
-                              {country.flag} {country.code} {country.country}
+                              {country.code} · {country.country}
                             </span>
                           </SelectItem>
                         ))}
@@ -302,7 +294,7 @@ export default function ContactoForm() {
                         field.onChange(`${selectedCountryCode}${value}`)
                       }}
                       value={field.value?.replace(selectedCountryCode, '') || ''}
-                      className="bg-negro border-none text-white placeholder:text-white/70 focus:ring-0 focus:border-none rounded-l-none flex-1"
+                      className="h-12 rounded-none px-4 text-white flex-1"
                     />
                   </div>
                 </FormControl>
@@ -321,7 +313,7 @@ export default function ContactoForm() {
                 </FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger id="select-contact" className="cursor-pointer bg-negro border-none w-full text-white placeholder:text-white/70 focus:ring-0 focus:border-none data-[placeholder]:text-white/70">
+                    <SelectTrigger id="select-contact" className="h-12 cursor-pointer rounded-none w-full text-white data-[placeholder]:text-white/45">
                       <SelectValue placeholder={intl.formatMessage({ id: "contact.form.subject.placeholder" })} />
                     </SelectTrigger>
                   </FormControl>
@@ -370,7 +362,7 @@ export default function ContactoForm() {
                 <Textarea
                   placeholder={intl.formatMessage({ id: "contact.form.message.placeholder" })}
                   {...field}
-                  className="bg-negro border-none text-white min-h-[150px] placeholder:text-white/70 focus:ring-0 focus:border-none"
+                  className="min-h-[160px] rounded-none p-4 text-white"
                 />
               </FormControl>
               <FormMessage />
@@ -378,7 +370,7 @@ export default function ContactoForm() {
           )}
         />
 
-        <Button type="submit" className="w-full bg-rojo hover:bg-rojo/90 text-white cursor-pointer" disabled={isSubmitting}>
+        <Button type="submit" className="min-h-12 w-full rounded-none bg-rojo text-sm font-extrabold uppercase tracking-[.1em] text-white hover:bg-[#f02b2b]" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

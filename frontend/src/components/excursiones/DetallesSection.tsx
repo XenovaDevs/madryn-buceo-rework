@@ -1,8 +1,6 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
 import { Clock, Users, LifeBuoy, Award, Fish, UserPlus, Anchor, Star, Shuffle, Map, ThumbsUp, User, ArrowRight } from "lucide-react"
-import { motion } from "framer-motion"
 import { FormattedMessage } from "react-intl"
 import type { ExcursionDetail } from "@/lib/data/Excursiones"
 
@@ -47,34 +45,26 @@ export default function DetallesSection({ details }: DetallesSectionProps) {
   }
 
   return (
-    <Card className="bg-negro-secundario shadow-md border-[#403d39] hover:shadow-xl transition-shadow duration-300 h-full">
-      <CardContent className="p-8">
-        <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
+    <section id="detalles" className="detail-chapter scroll-mt-28 p-7 md:p-10 lg:p-12">
+        <h2 className="flex items-center gap-3 text-3xl font-bold uppercase tracking-[-.03em] text-white md:text-5xl">
           <ArrowRight className="h-8 w-8 text-rojo" />
           <FormattedMessage id="detallesSection.title" />
         </h2>
-        <div className="space-y-4">
+        <div className="mt-10 grid gap-x-12 gap-y-9 md:grid-cols-2">
           {details.map((detail, index) => (
-            <motion.div
-              key={index}
-              className="flex flex-col lg:flex-row items-center gap-4 bg-negro/40 p-4 rounded-lg hover:bg-negro/60 transition-colors duration-200"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <div className="flex-shrink-0 p-3 bg-[#e12222]/10 rounded-full">{getIcon(detail)}</div>
-              <div className="flex-1 flex flex-col items-center lg:items-start">
-                <h3 className="font-bold text-white">
+            <article key={`${detail.title}-${index}`} className="grid grid-cols-[auto_1fr] items-start gap-4 border-l border-white/15 pl-5">
+              <div className="mt-0.5 flex-shrink-0">{getIcon(detail)}</div>
+              <div className="min-w-0">
+                <h3 className="text-lg font-bold text-white">
                   <FormattedMessage id={detail.title} />
                 </h3>
-                <p className="text-white text-sm text-center lg:text-start">
+                <p className="mt-2 text-sm leading-7 text-white/60">
                   <FormattedMessage id={detail.description} />
                 </p>
               </div>
-            </motion.div>
+            </article>
           ))}
         </div>
-      </CardContent>
-    </Card>
+    </section>
   )
 }

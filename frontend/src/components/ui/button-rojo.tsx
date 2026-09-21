@@ -1,59 +1,62 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Button } from "./button";
-import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { ReactNode } from "react"
+import type { ReactNode } from "react";
 
 interface ButtonRojoProps {
-    texto: ReactNode 
-    href?: string;
-    fullWidth?: boolean;
-    layoutId?: string;
-    onClick?: () => void;
+  texto: ReactNode;
+  href?: string;
+  fullWidth?: boolean;
+  onAccent?: boolean;
+  layoutId?: string;
+  onClick?: () => void;
 }
 
-export default function ButtonRojo({ texto, href, fullWidth = false, layoutId, onClick }: ButtonRojoProps) {
-    const router = useRouter();
+const baseClass =
+  "group inline-flex min-h-12 items-center justify-center gap-3 border border-rojo bg-rojo px-6 text-sm font-extrabold uppercase tracking-[.08em] text-white transition-[transform,background-color,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#f02b2b] hover:bg-[#f02b2b] active:translate-y-0";
 
-    const handleClick = () => {
-        if (href) {
-            router.push(href);
-        }
-    };
+const onAccentClass =
+  "group inline-flex min-h-12 items-center justify-center gap-3 border border-white bg-white px-6 text-sm font-extrabold uppercase tracking-[.08em] text-[#090b0c] shadow-[0_10px_30px_rgba(91,0,0,.22)] transition-[transform,background-color,color] duration-200 hover:-translate-y-0.5 hover:bg-[#090b0c] hover:text-white active:translate-y-0";
 
-    if (layoutId) {
-        return (
-            <motion.div 
-                layoutId={layoutId}
-                transition={{
-                    type: "spring",
-                    duration: 0.8,
-                    bounce: 0.2,
-                    damping: 20
-                }}
-            >
-                <Button
-                    size="lg"
-                    onClick={onClick || handleClick}
-                    className={`group bg-rojo rounded-sm hover:bg-rojo text-white transition-all duration-300 text-lg font-semibold cursor-pointer ${fullWidth ? 'w-full' : ''}`}
-                >
-                    {texto}
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-all duration-300" />
-                </Button>
-            </motion.div>
-        );
-    }
-    
-    return (
-        <Button
-            size="lg"
-            onClick={onClick || handleClick}
-            className={`group bg-rojo rounded-sm hover:bg-rojo text-white transition-all duration-300 text-lg font-semibold cursor-pointer ${fullWidth ? 'w-full' : ''}`}
-        >
-            {texto}
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-all duration-300" />
-        </Button>
-    );
+export default function ButtonRojo({
+  texto,
+  href,
+  fullWidth = false,
+  onAccent = false,
+  layoutId,
+  onClick,
+}: ButtonRojoProps) {
+  const className = `${onAccent ? onAccentClass : baseClass} ${fullWidth ? "w-full" : ""}`;
+  const content = (
+    <>
+      {texto}
+      <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+    </>
+  );
+
+  const element = href ? (
+    <Link
+      href={href}
+      className={className}
+      target={href.startsWith("http") ? "_blank" : undefined}
+      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      onClick={onClick}
+    >
+      {content}
+    </Link>
+  ) : (
+    <button type="button" className={className} onClick={onClick}>
+      {content}
+    </button>
+  );
+
+  return layoutId ? (
+    <motion.div layoutId={layoutId} className={fullWidth ? "w-full" : "w-fit"}>
+      {element}
+    </motion.div>
+  ) : (
+    element
+  );
 }

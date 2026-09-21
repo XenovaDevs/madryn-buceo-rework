@@ -1,75 +1,57 @@
 "use client";
 
-import { motion, useInView, type Variants } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
+import { FormattedMessage } from "react-intl";
 import { excursiones } from "@/lib/data/Excursiones";
 import ExcursionCard from "../excursiones/ExcursionCard";
-import { FormattedMessage } from "react-intl";
 
 export default function ActivitySection() {
-  const ref = useRef<HTMLElement | null>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const titleVariants: Variants = {
-    hidden: { opacity: 0, y: -50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1], // ✅ easing válido (easeOut)
-      },
-    },
-  };
-
   return (
-    <section className="pb-20 pt-24" id="actividades" ref={ref}>
-      <motion.div className="container flex flex-col items-center justify-center px-8 mx-auto">
-        <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-center text-white mb-8 uppercase font-oceanica tracking-wide"
-          variants={titleVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          <FormattedMessage id="home.activity.title" />
-        </motion.h2>
-
-        <motion.p
-          className="text-lg text-center text-white mb-12"
-          variants={titleVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          <FormattedMessage id="home.activity.description" />
-        </motion.p>
+    <section className="section-space relative" id="actividades">
+      <div className="site-container">
+        <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-6">
+            <p className="eyebrow">Experiencias en el Golfo Nuevo</p>
+            <h2 className="section-title mt-5 max-w-[10ch] text-white">
+              <FormattedMessage id="home.activity.title" />
+            </h2>
+          </div>
+          <p className="max-w-xl text-base leading-8 text-white/58 lg:col-span-5 lg:col-start-8 lg:justify-self-end">
+            <FormattedMessage id="home.activity.description" /> Elegí cómo querés conocer un mar que cambia con cada estación.
+          </p>
+        </div>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          variants={containerVariants}
+          className="mt-14 grid items-stretch gap-7 md:grid-cols-2 lg:grid-cols-3"
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.1 } },
+          }}
         >
           {excursiones.slice(0, 3).map((excursion, index) => (
-            <ExcursionCard
-              key={index}
-              title={excursion.title}
-              description={excursion.miniDescription}
-              image={excursion.cardImage}
-              link={`/excursiones/${excursion.slug}`}
-            />
+            <motion.div
+              key={excursion.slug}
+              className="h-full"
+              variants={{
+                hidden: { opacity: 0, y: 22 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
+              }}
+            >
+              <ExcursionCard
+                title={excursion.title}
+                description={excursion.miniDescription}
+                image={excursion.cardImage}
+                link={`/excursiones/${excursion.slug}`}
+                slug={excursion.slug}
+                index={index}
+              />
+            </motion.div>
           ))}
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }

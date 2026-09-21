@@ -1,9 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ButtonRojo from "../ui/button-rojo";
-import { Clock, Anchor, Award, ListChecks, Info } from "lucide-react";
+import { Award, Anchor, Check, Clock } from "lucide-react";
 import { FormattedMessage } from "react-intl";
+import ButtonRojo from "../ui/button-rojo";
 
 interface CourseDetailsProps {
   duration?: string;
@@ -13,112 +12,51 @@ interface CourseDetailsProps {
   slug?: string;
 }
 
-export default function CourseDetails({
-  duration,
-  depth,
-  certification,
-  requirements,
-  slug,
-}: CourseDetailsProps) {
+export default function CourseDetails({ duration, depth, certification, requirements, slug }: CourseDetailsProps) {
+  const facts = [
+    duration ? { icon: Clock, label: "time", value: duration } : null,
+    depth ? { icon: Anchor, label: "depth", value: depth } : null,
+    certification ? { icon: Award, label: "certification", value: certification } : null,
+  ].filter(Boolean) as { icon: typeof Clock; label: string; value: string }[];
+
   return (
-    <div className="lg:col-span-1 relative">
-      <Card className="sticky top-6 text-white bg-negro-secundario border-[#403d39]">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Info className="h-6 w-6 text-rojo" />
-            <FormattedMessage
-              id={
-                slug === "discover-scuba-diving"
-                  ? "courseDetails.title.program"
-                  : "courseDetails.title.course"
-              }
-              defaultMessage={
-                slug === "discover-scuba-diving" ? "Program Details" : "Course Details"
-              }
-            />
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <h4 className="font-semibold mb-2 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-rojo" />
-              <FormattedMessage id="time" defaultMessage="Duration" />
-            </h4>
-            <p className="text-white/80 ml-7">
-              {duration ? (
-                <FormattedMessage id={duration} defaultMessage="Consult" />
-              ) : (
-                <FormattedMessage
-                  id="courseDetails.consult"
-                  defaultMessage="Consult"
-                />
-              )}
-            </p>
-          </div>
-
-          {depth && (
-            <div>
-              <h4 className="font-semibold mb-2 flex items-center gap-2">
-                <Anchor className="h-5 w-5 text-rojo" />
-                <FormattedMessage id="depth" defaultMessage="Depth" />
-              </h4>
-              <p className="text-white/80 ml-7">
-                <FormattedMessage id={depth} defaultMessage="Consult" />
-              </p>
+    <section className="detail-chapter grid overflow-hidden lg:grid-cols-[1.05fr_.95fr]">
+      <div className="p-7 md:p-12 lg:p-16">
+        <h2 className="max-w-xl text-4xl font-bold uppercase leading-[.92] tracking-[-.04em] text-white md:text-6xl">
+          <FormattedMessage
+            id={slug === "discover-scuba-diving" ? "courseDetails.title.program" : "courseDetails.title.course"}
+            defaultMessage={slug === "discover-scuba-diving" ? "Detalles del programa" : "Detalles del curso"}
+          />
+        </h2>
+        <div className="mt-12 grid gap-8 sm:grid-cols-2">
+          {facts.map(({ icon: Icon, label, value }) => (
+            <div key={label} className="border-l border-white/15 pl-5">
+              <Icon className="size-6 text-rojo" strokeWidth={1.8} aria-hidden="true" />
+              <p className="mt-5 text-xs font-bold uppercase tracking-[.1em] text-white/40"><FormattedMessage id={label} /></p>
+              <p className="mt-2 text-lg font-semibold text-white"><FormattedMessage id={value} defaultMessage="Consultar" /></p>
             </div>
-          )}
+          ))}
+        </div>
+      </div>
 
-          {certification && (
-            <div>
-              <h4 className="font-semibold mb-2 flex items-center gap-2">
-                <Award className="h-5 w-5 text-rojo" />
-                <FormattedMessage
-                  id="certification"
-                  defaultMessage="Certification"
-                />
-              </h4>
-              <p className="text-white/80 ml-7">
-                <FormattedMessage id={certification} defaultMessage="Consult" />
-              </p>
+      <div className="flex flex-col justify-between border-t border-white/10 bg-[#0d1011] p-7 md:p-12 lg:border-l lg:border-t-0 lg:p-16">
+        <div>
+          <h3 className="text-2xl font-bold uppercase text-white"><FormattedMessage id="requirements" defaultMessage="Requisitos" /></h3>
+          {requirements?.length ? (
+            <div className="mt-7 space-y-5">
+              {requirements.map((requirement) => (
+                <p key={requirement} className="grid grid-cols-[auto_1fr] gap-3 text-sm leading-7 text-white/65">
+                  <Check className="mt-1 size-4 text-rojo" aria-hidden="true" />
+                  <FormattedMessage id={requirement} defaultMessage="Consultar" />
+                </p>
+              ))}
             </div>
-          )}
-
-          {requirements && (
-            <div>
-              <h4 className="font-semibold mb-2 flex items-center gap-2">
-                <ListChecks className="h-5 w-5 text-rojo" />
-                <FormattedMessage
-                  id="requirements"
-                  defaultMessage="Requirements"
-                />
-              </h4>
-              <ul className="text-white/80 pl-7 space-y-2">
-                {requirements.map((requirement, index) => (
-                  <li key={index}>
-                    <FormattedMessage
-                      id={requirement}
-                      defaultMessage="Consult"
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="pt-4">
-            <ButtonRojo
-              texto={
-                <FormattedMessage
-                  id="requestInfo"
-                  defaultMessage="Request More Information"
-                />
-              }
-              fullWidth={true}
-              href="/contacto"
-            />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          ) : <p className="mt-6 text-white/60"><FormattedMessage id="courseDetails.consult" defaultMessage="Consultar" /></p>}
+        </div>
+        <div className="mt-10">
+          <ButtonRojo texto={<FormattedMessage id="requestInfo" defaultMessage="Consultar curso" />} fullWidth href="/contacto" />
+        </div>
+      </div>
+    </section>
   );
 }

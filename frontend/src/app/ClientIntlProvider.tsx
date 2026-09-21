@@ -18,8 +18,11 @@ export default function ClientIntlProvider({
 
   useEffect(() => {
     const storedLocale = localStorage.getItem("locale") || locale
-    setCurrentLocale(storedLocale as "es" | "en")
-  }, [locale])
+    if (storedLocale !== currentLocale) {
+      const frame = requestAnimationFrame(() => setCurrentLocale(storedLocale as "es" | "en"))
+      return () => cancelAnimationFrame(frame)
+    }
+  }, [locale, currentLocale])
 
   return (
     <IntlProvider locale={currentLocale} messages={messages[currentLocale]}>

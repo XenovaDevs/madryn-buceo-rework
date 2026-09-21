@@ -1,6 +1,5 @@
 "use client"
 
-import { Map } from "lucide-react"
 import { excursiones } from "@/lib/data/Excursiones"
 import { Excursion } from "@/lib/data/Excursiones"
 import ExcursionCard from "./ExcursionCard"
@@ -12,13 +11,12 @@ interface OtrasExcursioesSectionProps {
 
 export default function OtrasExcursioesSection({ excursion }: OtrasExcursioesSectionProps) {
   return (
-    <section className="py-16 px-8 bg-negro-secundario flex items-center justify-center">
-      <div className="container">
-        <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
-          <Map className="h-6 w-6 text-rojo" />
+    <section className="border-t border-white/10 bg-negro-secundario py-28 md:py-36">
+      <div className="site-container">
+        <h2 className="max-w-3xl text-4xl font-bold uppercase leading-none text-white md:text-6xl">
           <FormattedMessage id="otrasExcursionesSection.title" />
         </h2>
-        <div className="grid md:grid-cols-3 gap-8 mt-8">
+        <div className="mt-12 grid items-stretch gap-7 md:grid-cols-2 lg:grid-cols-[1.2fr_.9fr_.9fr]">
           {excursiones
             .filter((e) => e.slug !== excursion.slug)
             .slice(0, 3)
@@ -29,6 +27,7 @@ export default function OtrasExcursioesSection({ excursion }: OtrasExcursioesSec
                 description={relatedExcursion.miniDescription}
                 image={relatedExcursion.cardImage}
                 link={`/excursiones/${relatedExcursion.slug}`}
+                slug={relatedExcursion.slug}
                 bg={true}
               />
             ))}

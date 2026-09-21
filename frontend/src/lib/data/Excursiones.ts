@@ -114,7 +114,7 @@ export const excursiones: Excursion[] = [
     ],
     galleryVideos: [
       "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/excursiones/snorkel/GX015072_wfh0lr.mp4",
-      "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/excursiones/snorkel/GX019812_1_mbvdht.mp4",
+      "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/videos/excursiones/snorkel/GX019812_1_mbvdht.mp4",
     ]
   },
   {

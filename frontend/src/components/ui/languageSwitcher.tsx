@@ -17,10 +17,11 @@ export default function LanguageSwitcher({ isMobile = false }: LanguageSwitcherP
 
   useEffect(() => {
     const stored = localStorage.getItem("locale")
-    if (stored && ["es", "en"].includes(stored)) {
-      setLocale(stored)
+    if (stored && ["es", "en"].includes(stored) && stored !== locale) {
+      const frame = requestAnimationFrame(() => setLocale(stored))
+      return () => cancelAnimationFrame(frame)
     }
-  }, [])
+  }, [locale])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

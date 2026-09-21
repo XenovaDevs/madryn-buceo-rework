@@ -1,163 +1,79 @@
 "use client";
 
-import type React from "react";
-import {
-  Anchor,
-  Clock,
-  Heart,
-  SeparatorHorizontal,
-  Shield,
-  ThumbsUp,
-  Users,
-} from "lucide-react";
-import { Card, CardContent } from "../ui/card";
-import { motion, useInView, type Variants } from "framer-motion";
-import { useRef } from "react";
-import ButtonRojo from "../ui/button-rojo";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Anchor, Clock3, Heart, ShieldCheck, ThumbsUp, Users } from "lucide-react";
 import { FormattedMessage } from "react-intl";
+import ButtonRojo from "../ui/button-rojo";
 
-const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+const features = [
+  { icon: Clock3, title: "home.whychoose.feature1.title", description: "home.whychoose.feature1.description" },
+  { icon: Users, title: "home.whychoose.feature2.title", description: "home.whychoose.feature2.description" },
+  { icon: ShieldCheck, title: "home.whychoose.feature3.title", description: "home.whychoose.feature3.description" },
+  { icon: ThumbsUp, title: "home.whychoose.feature4.title", description: "home.whychoose.feature4.description" },
+  { icon: Heart, title: "home.whychoose.feature5.title", description: "home.whychoose.feature5.description" },
+  { icon: Anchor, title: "home.whychoose.feature6.title", description: "home.whychoose.feature6.description" },
+];
 
 export default function WhyChooseSection() {
-  const ref = useRef<HTMLElement | null>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const titleVariants: Variants = {
-    hidden: { opacity: 0, y: -50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: EASE_OUT, // ✅ easing válido
-      },
-    },
-  };
-
   return (
-    <section className="py-12 bg-negro-secundario" ref={ref}>
-      <div className="container flex flex-col items-center justify-center px-8 mx-auto">
-        <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-center mb-4 text-white uppercase tracking-wide shadow-md"
-          variants={titleVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          <FormattedMessage id="home.whychoose.title" />
-        </motion.h2>
+    <section className="section-space border-y border-white/10 bg-[#111416]">
+      <div className="site-container grid gap-12 lg:grid-cols-[.82fr_1.18fr] lg:gap-20">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <p className="eyebrow">Una historia en el agua</p>
+          <h2 className="section-title mt-5 text-white">
+            <FormattedMessage id="home.whychoose.title" />
+          </h2>
+          <p className="mt-7 max-w-xl text-sm leading-7 text-white/58 md:text-base md:leading-8">
+            <FormattedMessage id="home.whychoose.description" />
+          </p>
 
-        <p className="text-center text-white max-w-3xl mx-auto mb-12 prose-lg">
-          <FormattedMessage id="home.whychoose.description" />
-        </p>
+          <div className="relative mt-9 aspect-[5/3] overflow-hidden">
+            <Image
+              src="https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/nosotros/terranovaa_lsleg4.webp"
+              alt="Equipo de Madryn Buceo navegando en el Golfo Nuevo"
+              fill
+              sizes="(max-width: 1024px) 100vw, 42vw"
+              className="object-cover grayscale-[18%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+            <span className="absolute bottom-4 left-4 bg-[#a80f17] px-3 py-2 text-xs font-extrabold uppercase tracking-[.15em] text-white">Desde 1983</span>
+          </div>
+
+          <div className="mt-7">
+            <ButtonRojo texto={<FormattedMessage id="home.whychoose.button" />} href="https://madrynbuceo.outtrip.com/" />
+          </div>
+        </div>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
+          className="divide-y divide-white/10 border-y border-white/10"
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12 }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }}
         >
-          <FeatureCard
-            icon={<Clock className="h-12 w-12 text-rojo" />}
-            title={<FormattedMessage id="home.whychoose.feature1.title" />}
-            description={
-              <FormattedMessage id="home.whychoose.feature1.description" />
-            }
-          />
-          <FeatureCard
-            icon={<Users className="h-12 w-12 text-rojo" />}
-            title={<FormattedMessage id="home.whychoose.feature2.title" />}
-            description={
-              <FormattedMessage id="home.whychoose.feature2.description" />
-            }
-          />
-          <FeatureCard
-            icon={<Shield className="h-12 w-12 text-rojo" />}
-            title={<FormattedMessage id="home.whychoose.feature3.title" />}
-            description={
-              <FormattedMessage id="home.whychoose.feature3.description" />
-            }
-          />
-          <FeatureCard
-            icon={<ThumbsUp className="h-12 w-12 text-rojo" />}
-            title={<FormattedMessage id="home.whychoose.feature4.title" />}
-            description={
-              <FormattedMessage id="home.whychoose.feature4.description" />
-            }
-          />
-          <FeatureCard
-            icon={<Heart className="h-12 w-12 text-rojo" />}
-            title={<FormattedMessage id="home.whychoose.feature5.title" />}
-            description={
-              <FormattedMessage id="home.whychoose.feature5.description" />
-            }
-          />
-          <FeatureCard
-            icon={<Anchor className="h-12 w-12 text-rojo" />}
-            title={<FormattedMessage id="home.whychoose.feature6.title" />}
-            description={
-              <FormattedMessage id="home.whychoose.feature6.description" />
-            }
-          />
+          {features.map(({ icon: Icon, title, description }, index) => (
+            <motion.article
+              key={title}
+              className="group grid gap-4 py-7 sm:grid-cols-[3rem_1fr] sm:py-9"
+              variants={{ hidden: { opacity: 0, x: 18 }, visible: { opacity: 1, x: 0 } }}
+            >
+              <span className="grid size-11 place-items-center border border-white/15 text-rojo transition-colors group-hover:border-rojo group-hover:bg-rojo group-hover:text-white">
+                <Icon className="size-5" strokeWidth={1.7} />
+              </span>
+              <div>
+                <p className="text-[.6rem] font-bold uppercase tracking-[.18em] text-white/30">0{index + 1}</p>
+                <h3 className="mt-1 font-display text-2xl font-bold uppercase text-white md:text-3xl">
+                  <FormattedMessage id={title} />
+                </h3>
+                <p className="mt-2 max-w-2xl text-sm leading-7 text-white/55">
+                  <FormattedMessage id={description} />
+                </p>
+              </div>
+            </motion.article>
+          ))}
         </motion.div>
-
-        <div className="text-center mt-12">
-          <ButtonRojo
-            texto={<FormattedMessage id="home.whychoose.button" />}
-            href="https://madrynbuceo.outtrip.com/"
-          />
-        </div>
       </div>
     </section>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: React.ReactNode;
-  description: React.ReactNode;
-}) {
-  const cardVariants: Variants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        type: "spring",
-        stiffness: 100, // ✅ spring está bien, no se toca
-      },
-    },
-  };
-
-  return (
-    <motion.div
-      variants={cardVariants}
-      whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-    >
-      <Card className="border-none rounded-none bg-negro transition-shadow h-full">
-        <CardContent className="p-4 flex flex-col items-center text-center">
-          <div className="mb-4 relative">{icon}</div>
-          <h3 className="text-xl font-bold mb-2 text-white">{title}</h3>
-          <SeparatorHorizontal className="w-24 h-1 bg-rojo mb-2 rounded-full" />
-          <p className="text-white/80 prose-p text-center mt-auto">
-            {description}
-          </p>
-        </CardContent>
-      </Card>
-    </motion.div>
   );
 }
