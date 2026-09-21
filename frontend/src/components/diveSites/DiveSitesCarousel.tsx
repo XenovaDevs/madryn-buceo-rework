@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, MapPin, MoveRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, MoveLeft, MoveRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { FormattedMessage } from "react-intl";
 import type { DiveSite } from "@/lib/data/ArrayDiveSites";
@@ -98,20 +98,57 @@ export default function DiveSitesCarousel({
 
   return (
     <section className="mt-12" aria-labelledby="dive-sites-rail-title">
-      <div className="mb-6 flex items-end justify-between gap-6">
+      <div className="mb-6 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[.15em] text-rojo">{filteredSites.length} puntos</p>
           <h2 id="dive-sites-rail-title" className="mt-2 text-2xl font-bold uppercase tracking-[-.025em] text-white md:text-3xl">
             <FormattedMessage id="diveSites.explore" defaultMessage="Explorá el mapa submarino" />
           </h2>
         </div>
-        <div className="hidden gap-2 sm:flex">
-          <button type="button" onClick={() => move(-1)} aria-label="Ver sitios anteriores" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
-            <ChevronLeft className="size-5" aria-hidden />
-          </button>
-          <button type="button" onClick={() => move(1)} aria-label="Ver sitios siguientes" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
-            <ChevronRight className="size-5" aria-hidden />
-          </button>
+        <div className="flex min-w-0 items-center gap-4 sm:gap-6">
+          <div className="min-w-0 flex-1 sm:min-w-64 sm:flex-none" aria-live="polite">
+            <div className="flex items-center justify-between gap-4 text-[.65rem] font-bold uppercase tracking-[.14em]">
+              <span className="flex min-w-0 items-center gap-2 text-white/58">
+                <motion.span
+                  animate={!prefersReducedMotion && !isPaused && !modalSiteName ? { x: [5, -4, 5] } : { x: 0 }}
+                  transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
+                  className="text-rojo"
+                >
+                  <MoveLeft className="size-4" aria-hidden />
+                </motion.span>
+                <span className="truncate">
+                  <FormattedMessage
+                    id={isPaused ? "diveSites.paused" : "diveSites.autoDirection"}
+                    defaultMessage={isPaused ? "Recorrido pausado" : "Avanza solo hacia la izquierda"}
+                  />
+                </span>
+              </span>
+              <span className="shrink-0 tabular-nums text-white">
+                {String(activeIndex + 1).padStart(2, "0")} / {String(filteredSites.length).padStart(2, "0")}
+              </span>
+            </div>
+            <div
+              className="mt-3 grid gap-1"
+              style={{ gridTemplateColumns: `repeat(${filteredSites.length}, minmax(0, 1fr))` }}
+              aria-hidden
+            >
+              {filteredSites.map((site, index) => (
+                <span
+                  key={site.name}
+                  className={`h-px transition-colors duration-500 ${index === activeIndex ? "bg-rojo" : "bg-white/16"}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden gap-2 sm:flex">
+            <button type="button" onClick={() => move(-1)} aria-label="Ver sitios anteriores" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
+              <ChevronLeft className="size-5" aria-hidden />
+            </button>
+            <button type="button" onClick={() => move(1)} aria-label="Ver sitios siguientes" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
+              <ChevronRight className="size-5" aria-hidden />
+            </button>
+          </div>
         </div>
       </div>
 

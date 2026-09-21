@@ -1,15 +1,20 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, LayoutGroup } from "framer-motion";
 import { diveSites } from "@/lib/data/ArrayDiveSites";
-import DiveSitesMap from "./DiveSitesMap";
 import DiveSitesCarousel from "./DiveSitesCarousel";
 import DiveSiteModal from "./DiveSiteModal";
 import { DiveSite } from "@/lib/data/ArrayDiveSites";
 import HeroSection from "./HeroSection";
 import { FormattedMessage } from "react-intl";
 import ButtonRojo from "@/components/ui/button-rojo";
+
+const DiveSitesMap = dynamic(() => import("./DiveSitesMap"), {
+  ssr: false,
+  loading: () => <div className="h-[380px] animate-pulse border border-white/10 bg-white/[.03] md:h-[580px]" aria-hidden />,
+});
 
 export default function DiveSitesPage() {
   const [activeIndex, setActiveIndex] = useState(0);
