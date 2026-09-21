@@ -63,37 +63,37 @@ export default function DiveSiteModal({ site, closeModal }: DiveSiteModalProps) 
             initial={{ opacity: 0.92 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0.92 }}
-            className="relative z-10 my-auto w-full max-w-7xl overflow-hidden border border-white/14 bg-[#0d1011]"
+            className="relative z-10 my-auto max-h-[calc(100dvh-1.5rem)] w-full max-w-6xl overflow-y-auto border border-white/14 bg-[#0d1011] lg:overflow-hidden"
           >
             <button
               ref={closeButton}
               type="button"
               onClick={closeModal}
               aria-label="Cerrar detalle"
-              className="absolute right-3 top-3 z-20 grid size-12 cursor-pointer place-items-center border border-white/25 bg-black/75 text-white transition-colors hover:border-rojo hover:bg-rojo md:right-5 md:top-5"
+              className="absolute right-3 top-3 z-20 grid size-10 cursor-pointer place-items-center border border-white/25 bg-black/75 text-white transition-colors hover:border-rojo hover:bg-rojo md:right-4 md:top-4"
             >
               <X className="size-5" aria-hidden />
             </button>
 
-            <div className="grid lg:grid-cols-[1.55fr_.8fr]">
+            <div className="grid lg:grid-cols-[1.4fr_.85fr]">
               <motion.div
                 layoutId={getDetailTransitionName(transitionId, "image")}
                 transition={{ layout: layoutTransition }}
-                className="relative overflow-hidden"
+                className="relative min-h-[18rem] overflow-hidden sm:min-h-[24rem] lg:min-h-0"
               >
-                <ImageGallery media={site.media} />
+                <ImageGallery media={site.media} className="h-full min-h-[18rem] sm:min-h-[24rem] lg:min-h-[34rem]" />
               </motion.div>
 
-              <div className="flex flex-col justify-between p-7 md:p-10 lg:p-12">
+              <div className="flex flex-col justify-between p-6 md:p-8 lg:p-9">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[.15em] text-rojo">
+                  <p className="text-[.68rem] font-bold uppercase tracking-[.15em] text-rojo">
                     <FormattedMessage id="diveSites.detailLabel" defaultMessage="Ficha de inmersión" />
                   </p>
                   <motion.h2
                     layoutId={getDetailTransitionName(transitionId, "title")}
                     transition={{ layout: layoutTransition }}
                     id="dive-site-title"
-                    className="mt-5 text-4xl font-bold uppercase leading-[.92] tracking-[-.04em] text-white md:text-5xl"
+                    className="mt-3 max-w-[15ch] text-3xl font-bold uppercase leading-[.94] tracking-[-.035em] text-white md:text-4xl lg:text-[2.6rem]"
                   >
                       <FormattedMessage id={site.name} />
                   </motion.h2>
@@ -101,12 +101,12 @@ export default function DiveSiteModal({ site, closeModal }: DiveSiteModalProps) 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: prefersReducedMotion ? 0 : 0.18, duration: prefersReducedMotion ? 0 : 0.3 }}
-                    className="mt-7 text-base leading-8 text-white/65"
+                    className="mt-5 max-w-[38ch] text-sm leading-7 text-white/65"
                   >
                       <FormattedMessage id={site.description} />
                   </motion.p>
 
-                  <dl className="mt-10 grid grid-cols-2 gap-px bg-white/10">
+                  <dl className="mt-7 grid grid-cols-2 gap-px bg-white/10">
                     {[
                       [Gauge, "diveSite.difficulty", site.difficulty, true],
                       [Ruler, "depth", site.depth, true],
@@ -115,9 +115,9 @@ export default function DiveSiteModal({ site, closeModal }: DiveSiteModalProps) 
                     ].map(([Icon, label, value, translated]) => {
                       const FactIcon = Icon as typeof Gauge;
                       return (
-                        <div key={String(label)} className="min-h-32 bg-[#111416] p-5">
-                          <FactIcon className="size-5 text-rojo" strokeWidth={1.8} aria-hidden />
-                          <dt className="mt-4 text-[.67rem] font-bold uppercase tracking-[.13em] text-white/40"><FormattedMessage id={String(label)} /></dt>
+                        <div key={String(label)} className="min-h-24 bg-[#111416] p-4">
+                          <FactIcon className="size-4 text-rojo" strokeWidth={1.8} aria-hidden />
+                          <dt className="mt-3 text-[.6rem] font-bold uppercase tracking-[.13em] text-white/40"><FormattedMessage id={String(label)} /></dt>
                           <dd className="mt-1 text-sm font-semibold text-white">{translated ? <FormattedMessage id={String(value)} /> : String(value)}</dd>
                         </div>
                       );
@@ -125,7 +125,7 @@ export default function DiveSiteModal({ site, closeModal }: DiveSiteModalProps) 
                   </dl>
                 </div>
 
-                <div className="mt-9">
+                <div className="mt-6">
                   <ButtonRojo texto={<FormattedMessage id="requestInfo" defaultMessage="Consultar salida" />} href="/contacto" fullWidth />
                 </div>
               </div>

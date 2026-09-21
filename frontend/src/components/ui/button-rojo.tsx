@@ -15,10 +15,10 @@ interface ButtonRojoProps {
 }
 
 const baseClass =
-  "group inline-flex min-h-12 items-center justify-center gap-3 border border-rojo bg-rojo px-6 text-sm font-extrabold uppercase tracking-[.08em] text-white transition-[transform,background-color,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#f02b2b] hover:bg-[#f02b2b] active:translate-y-0";
+  "group inline-flex min-h-12 items-center justify-center gap-3 whitespace-nowrap border border-rojo bg-rojo px-4 text-xs font-extrabold uppercase tracking-[.08em] text-white transition-[transform,background-color,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#f02b2b] hover:bg-[#f02b2b] active:translate-y-0 sm:px-6 sm:text-sm";
 
 const onAccentClass =
-  "group inline-flex min-h-12 items-center justify-center gap-3 border border-white bg-white px-6 text-sm font-extrabold uppercase tracking-[.08em] text-[#090b0c] shadow-[0_10px_30px_rgba(91,0,0,.22)] transition-[transform,background-color,color] duration-200 hover:-translate-y-0.5 hover:bg-[#090b0c] hover:text-white active:translate-y-0";
+  "group inline-flex min-h-12 items-center justify-center gap-3 whitespace-nowrap border border-white bg-white px-4 text-xs font-extrabold uppercase tracking-[.08em] text-[#090b0c] shadow-[0_10px_30px_rgba(91,0,0,.22)] transition-[transform,background-color,color] duration-200 hover:-translate-y-0.5 hover:bg-[#090b0c] hover:text-white active:translate-y-0 sm:px-6 sm:text-sm";
 
 export default function ButtonRojo({
   texto,

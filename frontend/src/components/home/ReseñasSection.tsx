@@ -13,10 +13,10 @@ export default function ReseñasSection() {
   return (
     <section className="section-space border-t border-white/10 bg-[#111416]">
       <div className="site-container">
-        <div className="grid items-end gap-8 md:grid-cols-[1fr_auto]">
+        <div className="grid items-end gap-8 md:grid-cols-[minmax(0,1fr)_auto]">
           <div>
             <p className="eyebrow">Experiencias verificadas</p>
-            <h2 className="section-title mt-5 max-w-[12ch] text-white">
+            <h2 className="section-title mt-5 max-w-[22ch] text-white">
               <FormattedMessage id="home.reseñas.title" />
             </h2>
           </div>

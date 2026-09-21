@@ -9,14 +9,14 @@ export default function ActivitySection() {
   return (
     <section className="section-space relative" id="actividades">
       <div className="site-container">
-        <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-6">
+        <div className="max-w-5xl">
+          <div>
             <p className="eyebrow">Experiencias en el Golfo Nuevo</p>
-            <h2 className="section-title mt-5 max-w-[10ch] text-white">
+            <h2 className="section-title mt-5 max-w-[22ch] text-white">
               <FormattedMessage id="home.activity.title" />
             </h2>
           </div>
-          <p className="max-w-xl text-base leading-8 text-white/58 lg:col-span-5 lg:col-start-8 lg:justify-self-end">
+          <p className="mt-6 max-w-3xl text-base leading-8 text-white/58">
             <FormattedMessage id="home.activity.description" /> Elegí cómo querés conocer un mar que cambia con cada estación.
           </p>
         </div>
