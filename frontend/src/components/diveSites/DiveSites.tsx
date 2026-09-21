@@ -1,6 +1,7 @@
 "use client";
 
-import { startTransition, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
+import { AnimatePresence, LayoutGroup } from "framer-motion";
 import { diveSites } from "@/lib/data/ArrayDiveSites";
 import DiveSitesMap from "./DiveSitesMap";
 import DiveSitesCarousel from "./DiveSitesCarousel";
@@ -24,17 +25,12 @@ export default function DiveSitesPage() {
   const certifications = Array.from(new Set(diveSites.map((site) => site.certification)));
 
   const openModal = useCallback((site: DiveSite) => {
-    startTransition(() => {
-      setSelectedSite(site);
-      setIsModalOpen(true);
-    });
+    setSelectedSite(site);
+    setIsModalOpen(true);
   }, []);
 
   const closeModal = useCallback(() => {
-    startTransition(() => {
-      setIsModalOpen(false);
-      setSelectedSite(null);
-    });
+    setIsModalOpen(false);
   }, []);
 
   return (
@@ -76,21 +72,32 @@ export default function DiveSitesPage() {
           })}
         </div>
 
-        <DiveSitesMap
-          selectedCoords={selectedCoords}
-          sites={diveSites}
-          certificationFilter={certificationFilter}
-          onMarkerClick={openModal}
-        />
-        <DiveSitesCarousel
-          sites={diveSites}
-          activeIndex={activeIndex}
-          setActiveIndex={setActiveIndex}
-          setSelectedCoords={setSelectedCoords}
-          certificationFilter={certificationFilter}
-          openModal={openModal}
-          modalSiteName={isModalOpen ? selectedSite?.name : undefined}
-        />
+        <LayoutGroup id="dive-sites">
+          <DiveSitesMap
+            selectedCoords={selectedCoords}
+            sites={diveSites}
+            certificationFilter={certificationFilter}
+            onMarkerClick={openModal}
+          />
+          <DiveSitesCarousel
+            sites={diveSites}
+            activeIndex={activeIndex}
+            setActiveIndex={setActiveIndex}
+            setSelectedCoords={setSelectedCoords}
+            certificationFilter={certificationFilter}
+            openModal={openModal}
+            modalSiteName={isModalOpen ? selectedSite?.name : undefined}
+          />
+          <AnimatePresence onExitComplete={() => setSelectedSite(null)}>
+            {selectedSite && isModalOpen ? (
+              <DiveSiteModal
+                key={selectedSite.name}
+                site={selectedSite}
+                closeModal={closeModal}
+              />
+            ) : null}
+          </AnimatePresence>
+        </LayoutGroup>
         <div className="mt-20 grid gap-8 border-t border-white/12 pt-10 lg:grid-cols-[1fr_auto] lg:items-center">
           <h2 className="max-w-3xl text-3xl font-bold uppercase leading-[.95] tracking-[-.035em] text-white md:text-5xl">
             <FormattedMessage id="diveSites.cta" defaultMessage="Tu próxima historia empieza bajo el mar" />
@@ -98,13 +105,6 @@ export default function DiveSitesPage() {
           <ButtonRojo texto={<FormattedMessage id="requestInfo" defaultMessage="Consultar salida" />} href="/contacto" />
         </div>
       </section>
-      {selectedSite && (
-        <DiveSiteModal
-          isOpen={isModalOpen}
-          site={selectedSite}
-          closeModal={closeModal}
-        />
-      )}
     </main>
   );
 }

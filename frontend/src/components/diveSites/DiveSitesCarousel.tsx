@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, MapPin, MoveRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { FormattedMessage } from "react-intl";
 import type { DiveSite } from "@/lib/data/ArrayDiveSites";
-import { SharedDetailTransition } from "@/components/detail/SharedDetailTransition";
+import { getDetailTransitionName } from "@/components/detail/SharedDetailTransition";
 
 interface Props {
   sites: DiveSite[];
@@ -30,9 +31,15 @@ export default function DiveSitesCarousel({
   modalSiteName,
 }: Props) {
   const rail = useRef<HTMLDivElement>(null);
-  const filteredSites = certificationFilter
-    ? sites.filter((site) => site.certification === certificationFilter)
-    : sites;
+  const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [isPaused, setIsPaused] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const filteredSites = useMemo(
+    () => certificationFilter
+      ? sites.filter((site) => site.certification === certificationFilter)
+      : sites,
+    [certificationFilter, sites],
+  );
 
   useEffect(() => {
     if (filteredSites.length > 0 && activeIndex >= filteredSites.length) {
@@ -41,13 +48,48 @@ export default function DiveSitesCarousel({
     }
   }, [activeIndex, filteredSites, setActiveIndex, setSelectedCoords]);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+    return () => mediaQuery.removeEventListener("change", updatePreference);
+  }, []);
+
+  useEffect(() => {
+    const carousel = rail.current;
+    const activeCard = cardRefs.current[activeIndex];
+    if (!carousel || !activeCard) return;
+
+    const centeredPosition = activeCard.offsetLeft - (carousel.clientWidth - activeCard.clientWidth) / 2;
+    carousel.scrollTo({
+      left: Math.max(0, centeredPosition),
+      behavior: prefersReducedMotion || activeIndex === 0 ? "auto" : "smooth",
+    });
+  }, [activeIndex, filteredSites, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (isPaused || modalSiteName || prefersReducedMotion || filteredSites.length < 2) return;
+
+    const timer = window.setInterval(() => {
+      const nextIndex = activeIndex >= filteredSites.length - 1 ? 0 : activeIndex + 1;
+      const nextSite = filteredSites[nextIndex];
+      setActiveIndex(nextIndex);
+      setSelectedCoords(nextSite.coords);
+    }, 4200);
+
+    return () => window.clearInterval(timer);
+  }, [activeIndex, filteredSites, isPaused, modalSiteName, prefersReducedMotion, setActiveIndex, setSelectedCoords]);
+
   const select = (site: DiveSite, index: number) => {
     setActiveIndex(index);
     setSelectedCoords(site.coords);
   };
 
-  const scroll = (direction: -1 | 1) => {
-    rail.current?.scrollBy({ left: direction * Math.min(window.innerWidth * 0.72, 540), behavior: "smooth" });
+  const move = (direction: -1 | 1) => {
+    const nextIndex = (activeIndex + direction + filteredSites.length) % filteredSites.length;
+    select(filteredSites[nextIndex], nextIndex);
   };
 
   if (!filteredSites.length) {
@@ -64,10 +106,10 @@ export default function DiveSitesCarousel({
           </h2>
         </div>
         <div className="hidden gap-2 sm:flex">
-          <button type="button" onClick={() => scroll(-1)} aria-label="Ver sitios anteriores" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
+          <button type="button" onClick={() => move(-1)} aria-label="Ver sitios anteriores" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
             <ChevronLeft className="size-5" aria-hidden />
           </button>
-          <button type="button" onClick={() => scroll(1)} aria-label="Ver sitios siguientes" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
+          <button type="button" onClick={() => move(1)} aria-label="Ver sitios siguientes" className="grid size-12 cursor-pointer place-items-center border border-white/16 text-white transition-colors hover:border-rojo hover:bg-rojo">
             <ChevronRight className="size-5" aria-hidden />
           </button>
         </div>
@@ -75,13 +117,20 @@ export default function DiveSitesCarousel({
 
       <div
         ref={rail}
-        className="flex snap-x snap-mandatory gap-1 overflow-x-auto pb-3 [scrollbar-color:#e51b23_#171b1d] lg:min-h-[34rem]"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onFocusCapture={() => setIsPaused(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
+        }}
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {filteredSites.map((site, index) => {
           const active = index === activeIndex;
           return (
             <button
               key={site.name}
+              ref={(element) => { cardRefs.current[index] = element; }}
               type="button"
               data-active={active}
               aria-pressed={active}
@@ -91,10 +140,13 @@ export default function DiveSitesCarousel({
                 select(site, index);
                 openModal(site);
               }}
-              className="group relative min-h-[30rem] basis-[82vw] shrink-0 snap-center cursor-pointer overflow-hidden text-left transition-[flex-basis] duration-500 ease-out sm:basis-[60vw] lg:min-h-[34rem] lg:basis-28 lg:data-[active=true]:basis-[34rem]"
+              className="group relative min-h-[29rem] basis-[84vw] shrink-0 snap-center cursor-pointer overflow-hidden border border-white/10 text-left opacity-70 transition-[opacity,border-color,transform] duration-500 ease-out hover:-translate-y-1 hover:opacity-100 data-[active=true]:border-rojo/70 data-[active=true]:opacity-100 sm:basis-[22rem] lg:min-h-[32rem] lg:basis-[24rem]"
             >
-              <SharedDetailTransition id={`dive-site-${site.name}`} role="image" enabled={modalSiteName !== site.name}>
-                <div className="absolute inset-0">
+              <motion.div
+                layoutId={getDetailTransitionName(`dive-site-${site.name}`, "image")}
+                transition={{ layout: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } }}
+                className="absolute inset-0"
+              >
                   <Image
                     src={getCardImage(site)}
                     alt=""
@@ -102,19 +154,20 @@ export default function DiveSitesCarousel({
                     sizes="(max-width: 640px) 82vw, (max-width: 1024px) 60vw, 544px"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   />
-                </div>
-              </SharedDetailTransition>
+              </motion.div>
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/18 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.13em] text-white/68">
                   <MapPin className="size-4 text-rojo" aria-hidden />
                   {site.time} / {site.certification}
                 </div>
-                <SharedDetailTransition id={`dive-site-${site.name}`} role="title" enabled={modalSiteName !== site.name}>
-                  <h3 className="mt-4 min-w-[15rem] max-w-md text-3xl font-bold uppercase leading-[.95] tracking-[-.035em] text-white md:text-4xl">
+                <motion.h3
+                  layoutId={getDetailTransitionName(`dive-site-${site.name}`, "title")}
+                  transition={{ layout: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+                  className="mt-4 max-w-md text-3xl font-bold uppercase leading-[.95] tracking-[-.035em] text-white md:text-4xl"
+                >
                     <FormattedMessage id={site.name} />
-                  </h3>
-                </SharedDetailTransition>
+                </motion.h3>
                 <span className="mt-6 inline-flex min-h-11 items-center gap-3 text-xs font-bold uppercase tracking-[.11em] text-white">
                   <FormattedMessage id="diveSites.viewDetail" defaultMessage="Ver detalle" />
                   <MoveRight className="size-5 text-rojo transition-transform group-hover:translate-x-1" aria-hidden />

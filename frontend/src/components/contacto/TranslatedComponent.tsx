@@ -1,8 +1,9 @@
 "use client";
 
-import { Mail, MapPin, Phone } from "lucide-react";
+import { ChevronDown, Mail, MapPin, Phone } from "lucide-react";
 import { FaFacebookF, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { FormattedMessage } from "react-intl";
+import { useState } from "react";
 import PageHero from "@/components/ui/PageHero";
 import ContactoForm from "@/components/contacto/ContactoForm";
 
@@ -18,6 +19,67 @@ const faq = [
   ["contact.faq.equipment.question", "contact.faq.equipment.answer"],
   ["contact.faq.discounts.question", "contact.faq.discounts.answer"],
 ] as const;
+
+function FaqItem({
+  question,
+  answer,
+  index,
+}: {
+  question: string;
+  answer: string;
+  index: number;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPreviewed, setIsPreviewed] = useState(false);
+  const answerId = `faq-answer-${index}`;
+  const isRevealed = isOpen || isPreviewed;
+
+  return (
+    <article
+      onMouseEnter={() => setIsPreviewed(true)}
+      onMouseLeave={() => setIsPreviewed(false)}
+      onFocus={() => setIsPreviewed(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsPreviewed(false);
+      }}
+      className="group border-b border-white/12 first:border-t"
+    >
+      <button
+        type="button"
+        aria-expanded={isRevealed}
+        aria-controls={answerId}
+        onClick={() => setIsOpen((open) => !open)}
+        className="grid min-h-24 w-full cursor-pointer grid-cols-[2.75rem_1fr_2.75rem] items-center gap-3 py-5 text-left sm:min-h-28 sm:grid-cols-[4rem_1fr_3rem] sm:gap-5 sm:py-6"
+      >
+        <span className="font-display text-base font-bold tabular-nums text-rojo sm:text-lg">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <h3 className="font-display text-xl font-bold leading-tight text-white transition-colors group-hover:text-rojo sm:text-2xl md:text-3xl">
+          <FormattedMessage id={question} />
+        </h3>
+        <span className="grid size-10 place-items-center border border-white/15 text-white transition-colors group-hover:border-rojo group-hover:bg-rojo sm:size-12">
+          <ChevronDown
+            className={`size-5 transition-transform duration-300 ${isRevealed ? "rotate-180" : ""}`}
+            aria-hidden
+          />
+        </span>
+      </button>
+
+      <div
+        id={answerId}
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+          isRevealed ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="max-w-3xl pb-7 pl-[3.5rem] pr-12 text-sm leading-7 text-white/60 sm:pb-9 sm:pl-[5.25rem] sm:pr-20 sm:text-base sm:leading-8">
+            <FormattedMessage id={answer} />
+          </p>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 export default function TranslatedContactContent() {
   return (
@@ -90,20 +152,14 @@ export default function TranslatedContactContent() {
       </section>
 
       <section className="section-space">
-        <div className="site-container grid gap-12 lg:grid-cols-[.65fr_1.35fr]">
-          <div>
+        <div className="site-container max-w-5xl">
+          <div className="mb-10 md:mb-14">
             <p className="eyebrow">Antes de venir</p>
             <h2 className="section-title mt-5 text-white"><FormattedMessage id="contact.faq.title" defaultMessage="Preguntas frecuentes" /></h2>
           </div>
-          <div className="divide-y divide-white/10 border-y border-white/10">
+          <div>
             {faq.map(([question, answer], index) => (
-              <article key={question} className="grid gap-3 py-7 sm:grid-cols-[2.5rem_1fr] sm:py-9">
-                <span className="font-display text-xl font-bold text-rojo">0{index + 1}</span>
-                <div>
-                  <h3 className="font-display text-2xl font-bold text-white"><FormattedMessage id={question} /></h3>
-                  <p className="mt-3 text-sm leading-7 text-white/55"><FormattedMessage id={answer} /></p>
-                </div>
-              </article>
+              <FaqItem key={question} question={question} answer={answer} index={index} />
             ))}
           </div>
         </div>
