@@ -1,10 +1,17 @@
 import L from "leaflet";
 
-const customIcon = L.icon({
-  iconUrl: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/marker/marker-icon-red_1_ahom1i.png",
-  shadowUrl: "https://xurbyte.github.io/assets-mdybuceo/MADRYN%20BUCEO_2025-07-05_09_54/images/marker/marker-shadow_mld78j.png",
-  iconSize: [16, 30],
-  iconAnchor: [12, 41],
-});
+const getCertificationClass = (certification: string) => {
+  if (certification === "Advanced OWD") return "dive-site-marker--advanced";
+  if (certification === "Open Water Diver") return "dive-site-marker--open-water";
+  return "dive-site-marker--scuba";
+};
 
-export default customIcon;
+export function createDiveSiteIcon(index: number, certification: string, active: boolean) {
+  return L.divIcon({
+    className: "dive-site-marker-icon",
+    html: `<span class="dive-site-marker ${getCertificationClass(certification)}${active ? " is-active" : ""}"><span>${String(index + 1).padStart(2, "0")}</span></span>`,
+    iconSize: [46, 46],
+    iconAnchor: [23, 23],
+    tooltipAnchor: [0, -22],
+  });
+}

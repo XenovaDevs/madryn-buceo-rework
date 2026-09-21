@@ -38,6 +38,16 @@ export default function DiveSitesPage() {
     setIsModalOpen(false);
   }, []);
 
+  const selectMapSite = useCallback((site: DiveSite) => {
+    const visibleSites = certificationFilter
+      ? diveSites.filter((candidate) => candidate.certification === certificationFilter)
+      : diveSites;
+    const nextIndex = visibleSites.findIndex((candidate) => candidate.name === site.name);
+
+    setSelectedCoords(site.coords);
+    setActiveIndex(Math.max(0, nextIndex));
+  }, [certificationFilter]);
+
   return (
     <main className="detail-page">
       <HeroSection
@@ -82,7 +92,8 @@ export default function DiveSitesPage() {
             selectedCoords={selectedCoords}
             sites={diveSites}
             certificationFilter={certificationFilter}
-            onMarkerClick={openModal}
+            onSiteSelect={selectMapSite}
+            onOpenSite={openModal}
           />
           <DiveSitesCarousel
             sites={diveSites}

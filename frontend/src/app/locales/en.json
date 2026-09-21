@@ -548,6 +548,12 @@
       "diveSites.explore": "Explore the underwater map",
       "diveSites.autoDirection": "Moves left automatically",
       "diveSites.paused": "Tour paused",
+      "diveSites.map.chart": "Dive chart",
+      "diveSites.map.area": "Golfo Nuevo",
+      "diveSites.map.count": "{count} mapped sites",
+      "diveSites.map.recenter": "View all sites",
+      "diveSites.map.selected": "Selected site",
+      "diveSites.map.open": "Open profile",
       "diveSites.viewDetail": "View details",
       "diveSites.detailLabel": "Dive profile",
       "diveSites.cta": "Your next story begins underwater"
